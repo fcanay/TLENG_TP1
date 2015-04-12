@@ -3,4 +3,4 @@
 
 
 def afd_minimo(archivo_regex, archivo_automata):
-    raise NotImplementedError
+    afd = 
