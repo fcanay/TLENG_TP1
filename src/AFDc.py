@@ -1,5 +1,18 @@
 nuestroLambda = " "
 
+#auxiliares
+def partition(s):
+	lines = s.split("\n")
+	res = []
+	i = 1
+	while i < len(lines):
+		res.append([lines[i][1:]])
+		i+=1
+		while (i < len(lines)) and (lines[i][1] == "\t"):
+			res[len(res)-1].append(lines[i][1:])
+			i+=1
+	return res
+
 class AFD:
 
 		# lista de estados del AFD
@@ -23,7 +36,7 @@ class AFD:
 			self.delta[estado] = [];
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) && (estado2 in self.estados) && (char in self.alfabeto):
+		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto):
 			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
@@ -47,27 +60,16 @@ class AFD:
 			for x in xrange(1,s[8]-1):
 				afd.concat(createFromRegex(parts[x]))
 			return afd
-		else if s[0:5] == "{STAR}":
-
-		else if s[0:5] == "{PLUS}":
-
-		else if s[0:4] == "{OPT}":
-
-		else if s[0:3] == "{OR}":
-
+		elif s[0:5] == "{STAR}":
+			pass
+		elif s[0:5] == "{PLUS}":
+			pass
+		elif s[0:4] == "{OPT}":
+			pass
+		elif s[0:3] == "{OR}":
+			pass
 		else:
-
-def partition(s):
-	lines = s.split("\n")
-	res = []
-	i = 1
-	while i <  len(lines):
-		res.append([lines[i][1:]])
-		i+=1
-		while (lines[i][2] == "\t") && (i <  len(lines)):
-			res[len(res)-1].append(lines[i][1:])
-			i+=1
-	return res
+			pass
 
 	#casos base
 	def letra(caracter):
@@ -79,7 +81,7 @@ def partition(s):
 		res.estado_inicial = "q1";
 		return res
 
-	def lambdaAFD(slf):
+	def lambdaAFD():
 		res = AFD()
 		res.estados = ["q1"]
 		res.estados_finales = ["q1"]
