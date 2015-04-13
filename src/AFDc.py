@@ -234,14 +234,16 @@ class AFD:
 		return
 
 	def	complemento(self):
+		self.completar()
 		self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
-		deltaAux = {}
-		for e in self.estados:
-			deltaAux[e]=[]
-		for e in self.estados:
-			for (char,est2) in self.delta[e]:
-				deltaAux[est2] = deltaAux[est2].append((char,e))
-		self.delta = deltaAux
+		
+	def completar(self):
+		self.agregar_estado("qTrampa")
+		for e in self.estados
+			charsAux = [char | (char,e1) in self.delta[e]]
+			for char in self.alfabeto
+				if char not in charsAux:
+					self.agregar_transicion(e,char,"qTrampa")
 
 	def	equivalente(self, adf1):
 		return
