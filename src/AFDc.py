@@ -1,3 +1,5 @@
+nuestroLambda = " "
+
 class AFD:
 
 		# lista de estados del AFD
@@ -37,6 +39,104 @@ class AFD:
 	def	fromRegex(self, regex_file):
 		return
 
+	#casos base
+	def letra(caracter):
+		res = AFD()
+		res.estados = ["q1", "q2"]
+		res.agregar_transicion("q1", caracter, "q2")
+		res.estados_finales = ["q2"];
+		res.alfabeto = [caracter];
+		res.estado_inicial = "q1";
+		return res
+
+	def lambdaAFD(slf):
+		res = AFD()
+		res.estados = ["q1"]
+		res.estados_finales = ["q1"]
+		res.estado_inicial = "q1"
+		return res
+
+	#casos recursivos
+	def concat(self, otroAFD):
+		#Reorganizo estados y delta
+		otroAFD.reorganizarEstados(len(self.estados) + 1)
+
+		# lambda es ' '. Checkear que onda con "acepta"
+		#Actualizo estados finales
+		for final in self.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, otroAFD.estado_inicial)
+
+		self.estados_finales = otroAFD.estados_finales
+		
+		#Nuevo Alfabeto
+		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+
+	def nuevoEstado(estado, anteriores):
+		valorFinal = int(estado[1:]) + anteriores
+		return "q" + str(valorFinal)
+
+	def star(self):
+		#Reorganizo estados y delta
+		estadoInicial = "q1"
+		i = self.reorganizarEstados(2)
+		estadoFinal = "q" + str(i)
+		self.agregar_estado(estadoFinal)
+
+		#Actualizo estados finales
+		for final in self.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, estadoFinal)
+			self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
+
+		self.estados_finales = estadoFinal
+
+		#Actualizo estados inciales
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
+
+		self.estado_inicial = estadoInicial
+
+		return
+
+	def plus(self):
+		return self.concat(self.star())
+
+	def opt(self):
+		return self.orAFD(lambdaAFD())
+
+	def orAFD(self, otroAFD):
+		#Reorganizo estados y delta
+		estadoInicial = "q1"
+		i = self.reorganizarEstados(2)
+		i = otroAFD.reorganizarEstados(i)
+		estadoFinal = "q" + str(i)
+		self.agregar_estado(estadoFinal)
+
+		#Actualizo estados finales
+		for final in self.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, estadoFinal)
+		for final in otroAFD.estados_finales:
+			otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
+
+		self.estados_finales = estadoFinal
+
+		#Actualizo estados inciales
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+		otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
+
+		self.estado_inicial = estadoInicial
+
+		#Nuevo Alfabeto		
+		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+		return
+
+	def reorganizarEstados(self, i):
+		for est in self.estados:
+			self.agregar_estado("q" + str(i))
+			for (simbolo,estado) in self.delta[est]:
+				self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+			i += 1
+		return i
+
 	def	fromFile(self, file):
 		return
 
@@ -45,6 +145,7 @@ class AFD:
 
 	def	minimizar(self):
 		return
+
 
 	def	toFile(self, file):
 		lineas = []
