@@ -241,7 +241,7 @@ class AFD:
 		for e in self.estados:
 			for (char,est2) in self.delta[e]:
 				deltaAux[est2] = deltaAux[est2].append((char,e))
-		
+		self.delta = deltaAux
 
 	def	equivalente(self, adf1):
 		return
