@@ -25,8 +25,8 @@ class AFD:
 			self.delta[estado] = [];
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) && (char in self.alfabeto):
-			self.delta[estado1] = self.delta[estado1] 
+		if (estado1 in self.estados) && (estado2 in self.estados) && (char in self.alfabeto):
+			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
 		self.acepta_desde(self.estado_inicial,cadena);
