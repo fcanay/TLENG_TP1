@@ -54,22 +54,24 @@ class AFD:
 		return  createFromRegex(lines)
 
 	def createFromRegex(s):
+		if s[0] != '{':
+			return letra(s[0])
+		parts = partition(s)
+		afd = createFromRegex(parts[0])
 		if s[0:7] == "{CONCAT}":
-			parts = partition(s)
-			afd = createFromRegex(parts[0])
 			for x in xrange(1,s[8]-1):
 				afd.concat(createFromRegex(parts[x]))
-			return afd
-		elif s[0:5] == "{STAR}":
-			pass
-		elif s[0:5] == "{PLUS}":
-			pass
-		elif s[0:4] == "{OPT}":
-			pass
-		elif s[0:3] == "{OR}":
-			pass
-		else:
-			pass
+
+		else if s[0:5] == "{STAR}":
+			afd.star()
+		else if s[0:5] == "{PLUS}":
+			afd.plus()
+		else if s[0:4] == "{OPT}":
+			afd.opt()
+		else if s[0:3] == "{OR}":
+			for x in xrange(1,s[4]-1):
+				afd.orAFD(createFromRegex(parts[x]))
+		return afd
 
 	#casos base
 	def letra(caracter):
