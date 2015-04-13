@@ -5,8 +5,7 @@ import AFDc
 
 def pertenece_al_lenguaje(archivo_automata, cadena):
     afd = fromFile(archivo_automata);
-    pertenece = afd.acepta(cadena);
-    if (pertenece):
+    if afd.acepta(cadena):
     	print "TRUE";
     else:
     	print "FALSE";

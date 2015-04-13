@@ -16,8 +16,8 @@ class AFD:
 		self.estados = [];
 		self.delta = {};
 		self.estados_finales = [];
-		alfabeto = [];
-		estado_inicial = None;
+		self.alfabeto = [];
+		self.estado_inicial = None;
 
 	def agregar_estado(self,estado):
 		if estado not in self.estados:
@@ -28,37 +28,46 @@ class AFD:
 		acepta_desde(self,self.estado_inicial,cadena);
 
 	def	acepta_desde(self,estado,cadena):
-		aux = [ est| (char,est) in self.delta[estado],char==cadena[0]];
+		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
 			return acepta_desde(self,aux[0],cadena.pop([0]));
 		else:
 			return False;
 
-	def	fromRegex(regex_file):
+	def	fromRegex(self, regex_file):
 		return
 
-	def	fromFile(file):
+	def	fromFile(self, file):
 		return
 
-	def	determinizar():
+	def	determinizar(self):
 		return
 
-	def	minimizar():
+	def	minimizar(self):
 		return
 
-	def	toFile(file):
-		afd = AFD();
-		
-		return afd;
+	def	toFile(self, file):
+		lineas = []
+		lineas.append( join('\t', self.estados) )
+		lineas.append( join('\t', self.alfabeto) )
+		lineas.append( self.estado_inicial )
+		lineas.append( join('\t', self.estados_finales) )
 
-	def	toDOT(file):
-		return;
+		for transicion in self.delta:
+			for (simbolo,estado) in self.delta[transicion]:
+				lineas.append(join('\t', [transicion, simbolo, estado]))
 
-	def	interseccion(adf1):
-		return;
+		file.write(join('\n', lineas))
+		return
 
-	def	complemento():
-		return;
+	def	toDOT(self, file):
+		return
 
-	def	equivalente(adf1):
-		return;
+	def	interseccion(self, adf1):
+		return
+
+	def	complemento(self):
+		return
+
+	def	equivalente(self, adf1):
+		return
