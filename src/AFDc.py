@@ -10,11 +10,7 @@ class AFD:
 		#alfabeto;
 		#estado_inicial;
 
-		
-
-
-
-	def __init(self):
+	def __init__(self):
 		self.estados = [];
 		self.delta = {};
 		self.estados_finales = [];
@@ -26,13 +22,17 @@ class AFD:
 			self.estados.append(estado);
 			self.delta[estado] = [];
 
+	def agregar_transicion(self,estado1,char,estado2):
+		if (estado1 in self.estados) && (estado2 in self.estados) && (char in self.alfabeto):
+			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
+
 	def acepta(self,cadena):
-		acepta_desde(self,self.estado_inicial,cadena);
+		self.acepta_desde(self.estado_inicial,cadena);
 
 	def	acepta_desde(self,estado,cadena):
 		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
-			return acepta_desde(self,aux[0],cadena.pop([0]));
+			return self.acepta_desde(aux[0],cadena.pop([0]));
 		else:
 			return False;
 
@@ -137,15 +137,25 @@ class AFD:
 			i += 1
 		return i
 
-	def	fromFile(self, file):
-		return
+	def	fromFile(self,file):
+		afd = AFD();
+		auxEstados = file.next().split();
+		for est in auxEstados:
+			afd.agregar_estado(est);
+		afd.alfabeto = file.next().split();
+		afd.estado_inicial = file.next();
+		afd.estados_finales = file.next().split();
+
+		for line in file:
+			pieces = line.split()
+			afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
+		return afd;
 
 	def	determinizar(self):
 		return
 
 	def	minimizar(self):
 		return
-
 
 	def	toFile(self, file):
 		lineas = []
