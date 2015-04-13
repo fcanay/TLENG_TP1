@@ -208,7 +208,29 @@ class AFD:
 	def	toDOT(self, file):
 		return
 
+	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
+	#Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
 	def	interseccion(self, adf1):
+		res = AFD()
+		#Estados y delta
+		for nodo1 in self.estados:
+			for nodo2 in afd1.estados:
+				res.agregar_estado(nodo1 + nodo2)
+
+				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
+					res.estados_finales.append(nodo1 + nodo2)
+
+				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
+					res.estado_inicial = nodo1 + nodo2
+
+				for (char1, estado1) in self.delta[nodo1]:
+					for (char2, estado2) in afd1.delta[nodo2]:
+						if(char1 == char2):
+							res.agregar_transicion(nodo1 + nodo2, char1, estado1 + estado2)
+
+		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
+
+		self = res
 		return
 
 	def	complemento(self):
