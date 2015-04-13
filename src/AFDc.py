@@ -1,5 +1,18 @@
 nuestroLambda = " "
 
+#auxiliares
+def partition(s):
+	lines = s.split("\n")
+	res = []
+	i = 1
+	while i < len(lines):
+		res.append([lines[i][1:]])
+		i+=1
+		while (i < len(lines)) and (lines[i][1] == "\t"):
+			res[len(res)-1].append(lines[i][1:])
+			i+=1
+	return res
+
 class AFD:
 
 		# lista de estados del AFD
@@ -48,6 +61,7 @@ class AFD:
 		if s[0:7] == "{CONCAT}":
 			for x in xrange(1,s[8]-1):
 				afd.concat(createFromRegex(parts[x]))
+
 		else if s[0:5] == "{STAR}":
 			afd.star()
 		else if s[0:5] == "{PLUS}":
@@ -58,17 +72,6 @@ class AFD:
 			for x in xrange(1,s[4]-1):
 				afd.orAFD(createFromRegex(parts[x]))
 		return afd
-	def partition(s):
-		lines = s.split("\n")
-		res = []
-		i = 1
-		while i <  len(lines):
-			res.append([lines[i][1:]])
-			i+=1
-			while (lines[i][2] == "\t") and (i <  len(lines)):
-				res[len(res)-1].append(lines[i][1:])
-				i+=1
-		return res
 
 	#casos base
 	def letra(caracter):
@@ -80,7 +83,7 @@ class AFD:
 		res.estado_inicial = "q1";
 		return res
 
-	def lambdaAFD(slf):
+	def lambdaAFD():
 		res = AFD()
 		res.estados = ["q1"]
 		res.estados_finales = ["q1"]
@@ -205,7 +208,29 @@ class AFD:
 	def	toDOT(self, file):
 		return
 
+	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
+	#Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
 	def	interseccion(self, adf1):
+		res = AFD()
+		#Estados y delta
+		for nodo1 in self.estados:
+			for nodo2 in afd1.estados:
+				res.agregar_estado(nodo1 + nodo2)
+
+				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
+					res.estados_finales.append(nodo1 + nodo2)
+
+				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
+					res.estado_inicial = nodo1 + nodo2
+
+				for (char1, estado1) in self.delta[nodo1]:
+					for (char2, estado2) in afd1.delta[nodo2]:
+						if(char1 == char2):
+							res.agregar_transicion(nodo1 + nodo2, char1, estado1 + estado2)
+
+		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
+
+		self = res
 		return
 
 	def	complemento(self):
