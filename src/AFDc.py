@@ -23,7 +23,7 @@ class AFD:
 			self.delta[estado] = [];
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) && (estado2 in self.estados) && (char in self.alfabeto):
+		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto):
 			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
@@ -41,33 +41,34 @@ class AFD:
 		return  createFromRegex(lines)
 
 	def createFromRegex(s):
+		if s[0] != '{':
+			return letra(s[0])
+		parts = partition(s)
+		afd = createFromRegex(parts[0])
 		if s[0:7] == "{CONCAT}":
-			parts = partition(s)
-			afd = createFromRegex(parts[0])
 			for x in xrange(1,s[8]-1):
 				afd.concat(createFromRegex(parts[x]))
-			return afd
 		else if s[0:5] == "{STAR}":
-
+			afd.star()
 		else if s[0:5] == "{PLUS}":
-
+			afd.plus()
 		else if s[0:4] == "{OPT}":
-
+			afd.opt()
 		else if s[0:3] == "{OR}":
-
-		else:
-
-def partition(s):
-	lines = s.split("\n")
-	res = []
-	i = 1
-	while i <  len(lines):
-		res.append([lines[i][1:]])
-		i+=1
-		while (lines[i][2] == "\t") && (i <  len(lines)):
-			res[len(res)-1].append(lines[i][1:])
+			for x in xrange(1,s[4]-1):
+				afd.orAFD(createFromRegex(parts[x]))
+		return afd
+	def partition(s):
+		lines = s.split("\n")
+		res = []
+		i = 1
+		while i <  len(lines):
+			res.append([lines[i][1:]])
 			i+=1
-	return res
+			while (lines[i][2] == "\t") and (i <  len(lines)):
+				res[len(res)-1].append(lines[i][1:])
+				i+=1
+		return res
 
 	#casos base
 	def letra(caracter):
