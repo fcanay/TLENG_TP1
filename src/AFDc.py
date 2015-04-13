@@ -37,7 +37,37 @@ class AFD:
 			return False;
 
 	def	fromRegex(self, regex_file):
-		return
+		lines = regex_file.readlines()
+		return  createFromRegex(lines)
+
+	def createFromRegex(s):
+		if s[0:7] == "{CONCAT}":
+			parts = partition(s)
+			afd = createFromRegex(parts[0])
+			for x in xrange(1,s[8]-1):
+				afd.concat(createFromRegex(parts[x]))
+			return afd
+		else if s[0:5] == "{STAR}":
+
+		else if s[0:5] == "{PLUS}":
+
+		else if s[0:4] == "{OPT}":
+
+		else if s[0:3] == "{OR}":
+
+		else:
+
+def partition(s):
+	lines = s.split("\n")
+	res = []
+	i = 1
+	while i <  len(lines):
+		res.append([lines[i][1:]])
+		i+=1
+		while (lines[i][2] == "\t") && (i <  len(lines)):
+			res[len(res)-1].append(lines[i][1:])
+			i+=1
+	return res
 
 	#casos base
 	def letra(caracter):
