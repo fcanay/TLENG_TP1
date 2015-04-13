@@ -209,7 +209,14 @@ class AFD:
 		return
 
 	def	complemento(self):
-		return
+		self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
+		deltaAux = {}
+		for e in self.estados:
+			deltaAux[e]=[]
+		for e in self.estados:
+			for (char,est2) in self.delta[e]:
+				deltaAux[est2] = deltaAux[est2].append((char,e))
+		
 
 	def	equivalente(self, adf1):
 		return
