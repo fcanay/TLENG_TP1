@@ -181,6 +181,7 @@ class AFD:
         sels.delta[est].remove((simbolo,estado)) 
       i -= 1
       self.estados.remove(est)
+      self.deta[est] = []
     return i+len(self.estados)
     #Habria que ver si es necesario devolverlo
 
