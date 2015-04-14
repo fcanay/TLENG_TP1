@@ -109,8 +109,8 @@ class AFD:
 	def star(self):
 		#Reorganizo estados y delta
 		estadoInicial = "q1"
-		i = self.reorganizarEstados(2)
-		estadoFinal = "q" + str(i)
+		i = self.reorganizarEstados(1)
+		estadoFinal = "q" + str(i+1)
 		self.agregar_estado(estadoFinal)
 
 		#Actualizo estados finales
@@ -137,9 +137,9 @@ class AFD:
 	def orAFD(self, otroAFD):
 		#Reorganizo estados y delta
 		estadoInicial = "q1"
-		i = self.reorganizarEstados(2)
+		i = self.reorganizarEstados(1)
 		i = otroAFD.reorganizarEstados(i)
-		estadoFinal = "q" + str(i)
+		estadoFinal = "q" + str(i+1)
 		self.agregar_estado(estadoFinal)
 
 		#Actualizo estados finales
