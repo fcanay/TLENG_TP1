@@ -36,7 +36,8 @@ class AFD:
 			self.delta[estado] = [];
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto):
+		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
+		(not (char,estado2) in self.delta[estado1]):
 			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
@@ -46,8 +47,8 @@ class AFD:
 		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
 			return self.acepta_desde(aux[0],cadena.pop([0]));
-		else:
-			return False;
+    else:
+      return False;
 
 	def	fromRegex(self, regex_file):
 		lines = regex_file.readlines()
@@ -105,10 +106,6 @@ class AFD:
 		#Nuevo Alfabeto
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 
-	def nuevoEstado(estado, anteriores):
-		valorFinal = int(estado[1:]) + anteriores
-		return "q" + str(valorFinal)
-
 	def star(self):
 		#Reorganizo estados y delta
 		estadoInicial = "q1"
@@ -163,13 +160,29 @@ class AFD:
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 		return
 
-	def reorganizarEstados(self, i):
-		for est in self.estados:
-			self.agregar_estado("q" + str(i))
-			for (simbolo,estado) in self.delta[est]:
-				self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-			i += 1
-		return i
+  def nuevoEstado(estado, anteriores):
+    valorFinal = int(estado[1:]) + anteriores
+    return "q" + str(valorFinal)
+
+	# def reorganizarEstados(self, i):
+	# 	for est in self.estados:
+	# 		self.agregar_estado("q" + str(i))
+	# 		for (simbolo,estado) in self.delta[est]:
+	# 			self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+	# 		i += 1
+	# 	return i
+
+  def reorganizarEstados(self, i):
+    i += len(self.estados)
+    for est in self.estados.reverse():
+      self.agregar_estado("q" + str(i))
+      for (simbolo,estado) in self.delta[est]:
+        self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+        sels.delta[est].remove((simbolo,estado)) 
+      i -= 1
+      self.estados.remove(est)
+    return i+len(self.estados)
+    #Habria que ver si es necesario devolverlo
 
 	def	fromFile(self,file):
 		afd = AFD();
