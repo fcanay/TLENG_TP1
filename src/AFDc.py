@@ -133,16 +133,17 @@ class AFD:
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 
 	 def reorganizarEstados(self, i):
+	 deltaAux = {}
       for est in self.estados:
-        self.delta[est] = [e + i for e in self.delta[e]]
+        deltaAux[est] = [e + i for e in self.delta[e]]
+      self.delta = deltaAux
       self.estados = [est + i for est in self.estados]
       self.estado_inicial += i
       self.estados_finales = [est + i for est in self.estados_finales]
 
     def star(self):
         #Reorganizo estados y delta
-        estadoInicial = 1
-        self.reorganizarEstados(1)
+        estadoInicial = self.agregar_estado() 
         estadoFinal = self.agregar_estado()
 
         #Actualizo estados finales
@@ -150,7 +151,7 @@ class AFD:
             self.agregar_transicion(final, nuestroLambda, estadoFinal)
             self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
 
-        self.estados_finales = estadoFinal
+        self.estados_finales = [estadoFinal]
 
         #Actualizo estados inciales
         self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
@@ -168,23 +169,22 @@ class AFD:
 
     def orAFD(self, otroAFD):
         #Reorganizo estados y delta
-        estadoInicial = 1
-        i = self.reorganizarEstados(1)
-        i = otroAFD.reorganizarEstados(i)
-        estadoFinal = i+1
-        self.agregar_estado(estadoFinal)
-
+        estadoInicial = self.agregar_estado()
+        estadoFinal = self.agregar_estado()
+        otroAFD.reorganizarEstados(len(self.estados))
+        for x in xrange(1,len(otroAFD.estados)):
+        	self.agregar_estado()
         #Actualizo estados finales
         for final in self.estados_finales:
             self.agregar_transicion(final, nuestroLambda, estadoFinal)
         for final in otroAFD.estados_finales:
-            otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
+            self.agregar_transicion(final, nuestroLambda, estadoFinal)
 
         self.estados_finales = estadoFinal
 
         #Actualizo estados inciales
         self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-        otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
+        self.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
 
         self.estado_inicial = estadoInicial
 
