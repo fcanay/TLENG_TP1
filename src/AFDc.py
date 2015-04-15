@@ -185,7 +185,39 @@ class AFD:
 			afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
 		return afd;
 
+	#Asumimos AFND y no AFND-lambda
 	def	determinizar(self):
+		self.AFNDLambdaToAFND()
+		self.AFNDToAFD()
+		return
+
+	def AFNDLambdaToAFND(self):
+		return
+
+	def AFNDToAFD(self):
+		res = AFD()
+		res.estados = partes(self.estados)
+		res.estado_inicial = set(self.estado_inicial)
+		res.estados_finales = set([ x | x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
+		res.alfabeto = self.alfabeto
+
+		#deltaAux tiene "a donde llego", "desde donde"
+		deltaAux = {}
+		for letra in res.alfabeto:
+			for est in res.estados:
+				estadosAux = set([ x | (a,x) in self.delta[est], a == letra ])
+				if(estadosAux in deltaAux[letra]):
+					deltaAux[letra][estadosAux].add(est)
+				else:
+					deltaAux[letra][estadosAux] = set(est)
+
+		#Ahora tenemos que armar el delta (que es al reves que deltaAux)
+		for (key,value) in deltaAux:
+			res.delta[value] = key
+		self = res
+
+	#devuelve sets
+	def partes(lista):
 		return
 
 	def	minimizar(self):
