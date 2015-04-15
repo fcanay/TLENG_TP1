@@ -55,248 +55,242 @@ def lambdaAFD():
 	return res
 
 def nuevoEstado(estado, anteriores):
-    valorFinal = int(estado[1:]) + anteriores
-    return "q" + str(valorFinal)
+    valorFinal = estado + anteriores
+    return valorFinal
 
-def reorganizarEstados(i):
-  i += len(self.estados)
-  for est in self.estados.reverse():
-    self.agregar_estado("q" + str(i))
-    for (simbolo,estado) in self.delta[est]:
-      self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-      sels.delta[est].remove((simbolo,estado)) 
-    i -= 1
-    self.estados.remove(est)
-    self.deta[est] = []
-  return i+len(self.estados)
-  #Habria que ver si es necesario devolverlo
 
-def	fromFile(file):
-	afd = AFD();
-	auxEstados = file.next().split();
-	for est in auxEstados:
-		afd.agregar_estado(est);
-	afd.alfabeto = file.next().split();
-	afd.estado_inicial = file.next();
-	afd.estados_finales = file.next().split();
+def fromFile(file):
+    afd = AFD();
+    auxEstados = file.next().split();
+    for est in auxEstados:
+        afd.agregar_estado(est);
+    afd.alfabeto = file.next().split();
+    afd.estado_inicial = file.next();
+    afd.estados_finales = file.next().split();
 
-	for line in file:
-		pieces = line.split()
-		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
-	return afd;
-		
-	def partes(lista):
-		return
-		
+    for line in file:
+        pieces = line.split()
+        afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
+    return afd;
+        
+def partes(lista):
+    return
+        
 class AFD:
 
-		# lista de estados del AFD
-		#estados
-		#Funcion de transicion de estados -> (char,estado)
-		#delta;
-		#estados_finales;
-		#alfabeto;
-		#estado_inicial;
+        # lista de estados del AFD
+        #estados
+        #Funcion de transicion de estados -> (char,estado)
+        #delta;
+        #estados_finales;
+        #alfabeto;
+        #estado_inicial;
 
-	def __init__(self):
-		self.estados = [];
-		self.delta = {};
-		self.estados_finales = [];
-		self.alfabeto = [];
-		self.estado_inicial = None;
+    def __init__(self):
+        self.estados = [];
+        self.delta = {};
+        self.estados_finales = [];
+        self.alfabeto = [];
+        self.estado_inicial = None;
 
-	def agregar_estado(self,estado):
-		if estado not in self.estados:
-			self.estados.append(estado);
-			self.delta[estado] = [];
+    def agregar_estado(self,estado):
+        if estado not in self.estados:
+            self.estados.append(estado);
+            self.delta[estado] = [];
 
-	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
-		(not (char,estado2) in self.delta[estado1]):
-			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
+    def agregar_transicion(self,estado1,char,estado2):
+        if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
+        (not (char,estado2) in self.delta[estado1]):
+            self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
-	def acepta(self,cadena):
-		self.acepta_desde(self.estado_inicial,cadena);
+    def acepta(self,cadena):
+        self.acepta_desde(self.estado_inicial,cadena);
 
-	def	acepta_desde(self,estado,cadena):
-		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
-		if aux.len != 0:
-			return self.acepta_desde(aux[0],cadena.pop([0]));
+    def acepta_desde(self,estado,cadena):
+        aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
+        if aux.len != 0:
+            return self.acepta_desde(aux[0],cadena.pop([0]));
     else:
       return False;
 
 
-	#casos recursivos
-	def concat(self, otroAFD):
-		#Reorganizo estados y delta
-		otroAFD.reorganizarEstados(len(self.estados) + 1)
+    #casos recursivos
+    def concat(self, otroAFD):
+        #Reorganizo estados y delta
+        otroAFD.reorganizarEstados(len(self.estados) + 1)
 
-		# lambda es ' '. Checkear que onda con "acepta"
-		#Actualizo estados finales
-		for final in self.estados_finales:
-			self.agregar_transicion(final, nuestroLambda, otroAFD.estado_inicial)
+        # lambda es ' '. Checkear que onda con "acepta"
+        #Actualizo estados finales
+        for final in self.estados_finales:
+            self.agregar_transicion(final, nuestroLambda, otroAFD.estado_inicial)
 
-		self.estados_finales = otroAFD.estados_finales
-		
-		#Nuevo Alfabeto
-		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+        self.estados_finales = otroAFD.estados_finales
+        
+        #Nuevo Alfabeto
+        self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+    
+    def reorganizarEstados(self, i):
+      for est in self.estados:
+        self.delta[est] = [e + i for e in self.delta[e]]
+      self.estados = [est + i for est in self.estados]
+      self.estado_inicial += i
+      self.estados_finales = [est + i for est in self.estados_finales]
 
-	def star(self):
-		#Reorganizo estados y delta
-		estadoInicial = "q1"
-		i = self.reorganizarEstados(1)
-		estadoFinal = "q" + str(i+1)
-		self.agregar_estado(estadoFinal)
+    def star(self):
+        #Reorganizo estados y delta
+        estadoInicial = 1
+        self.reorganizarEstados(1)
+        estadoFinal = self.agregar_estado()
 
-		#Actualizo estados finales
-		for final in self.estados_finales:
-			self.agregar_transicion(final, nuestroLambda, estadoFinal)
-			self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
+        #Actualizo estados finales
+        for final in self.estados_finales:
+            self.agregar_transicion(final, nuestroLambda, estadoFinal)
+            self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
 
-		self.estados_finales = estadoFinal
+        self.estados_finales = estadoFinal
 
-		#Actualizo estados inciales
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
+        #Actualizo estados inciales
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
 
-		self.estado_inicial = estadoInicial
+        self.estado_inicial = estadoInicial
 
-		return
+        return
 
-	def plus(self):
-		return self.concat(self.star())
+    def plus(self):
+        return self.concat(self.star())
 
-	def opt(self):
-		return self.orAFD(lambdaAFD())
+    def opt(self):
+        return self.orAFD(lambdaAFD())
 
-	def orAFD(self, otroAFD):
-		#Reorganizo estados y delta
-		estadoInicial = "q1"
-		i = self.reorganizarEstados(1)
-		i = otroAFD.reorganizarEstados(i)
-		estadoFinal = "q" + str(i+1)
-		self.agregar_estado(estadoFinal)
+    def orAFD(self, otroAFD):
+        #Reorganizo estados y delta
+        estadoInicial = 1
+        i = self.reorganizarEstados(1)
+        i = otroAFD.reorganizarEstados(i)
+        estadoFinal = i+1
+        self.agregar_estado(estadoFinal)
 
-		#Actualizo estados finales
-		for final in self.estados_finales:
-			self.agregar_transicion(final, nuestroLambda, estadoFinal)
-		for final in otroAFD.estados_finales:
-			otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
+        #Actualizo estados finales
+        for final in self.estados_finales:
+            self.agregar_transicion(final, nuestroLambda, estadoFinal)
+        for final in otroAFD.estados_finales:
+            otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
 
-		self.estados_finales = estadoFinal
+        self.estados_finales = estadoFinal
 
-		#Actualizo estados inciales
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-		otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
+        #Actualizo estados inciales
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+        otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
 
-		self.estado_inicial = estadoInicial
+        self.estado_inicial = estadoInicial
 
-		#Nuevo Alfabeto		
-		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
-		return
-
-
-	# def reorganizarEstados(self, i):
-	# 	for est in self.estados:
-	# 		self.agregar_estado("q" + str(i))
-	# 		for (simbolo,estado) in self.delta[est]:
-	# 			self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-	# 		i += 1
-	# 	return i
+        #Nuevo Alfabeto     
+        self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+        return
 
 
-	#Asumimos AFND y no AFND-lambda
-	def	determinizar(self):
-		self.AFNDLambdaToAFND()
-		self.AFNDToAFD()
-		return
+    # def reorganizarEstados(self, i):
+    #   for est in self.estados:
+    #       self.agregar_estado("q" + str(i))
+    #       for (simbolo,estado) in self.delta[est]:
+    #           self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+    #       i += 1
+    #   return i
 
-	def AFNDLambdaToAFND(self):
-		return
 
-	#TODO: TESTEAR
-	def AFNDToAFD(self):
-		res = AFD()
-		res.estados = partes(self.estados)
-		res.estado_inicial = set(self.estado_inicial)
-		res.estados_finales = set([ x | x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
-		res.alfabeto = self.alfabeto
+    #Asumimos AFND y no AFND-lambda
+    def determinizar(self):
+        self.AFNDLambdaToAFND()
+        self.AFNDToAFD()
+        return
 
-		#deltaAux tiene "a donde llego", "desde donde"
-		deltaAux = {}
-		for letra in self.alfabeto:
-			for est in self.estados:
-				estadosAux = set([ x | (a,x) in self.delta[est], a == letra ])
-				if(estadosAux in deltaAux[letra]):
-					deltaAux[letra][estadosAux].add(est)
-				else:
-					deltaAux[letra][estadosAux] = set(est)
+    def AFNDLambdaToAFND(self):
+        return
 
-		#Ahora tenemos que armar el delta (que es al reves que deltaAux)
-		for (key,value) in deltaAux:
-			for v2 in partes(value):
-				res.delta[v2] = partes(key)
-		self = res
+    #TODO: TESTEAR
+    def AFNDToAFD(self):
+        res = AFD()
+        res.estados = partes(self.estados)
+        res.estado_inicial = set(self.estado_inicial)
+        res.estados_finales = set([ x | x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
+        res.alfabeto = self.alfabeto
 
-	#devuelve sets
-	
+        #deltaAux tiene "a donde llego", "desde donde"
+        deltaAux = {}
+        for letra in self.alfabeto:
+            for est in self.estados:
+                estadosAux = set([ x | (a,x) in self.delta[est], a == letra ])
+                if(estadosAux in deltaAux[letra]):
+                    deltaAux[letra][estadosAux].add(est)
+                else:
+                    deltaAux[letra][estadosAux] = set(est)
 
-	def	minimizar(self):
-		return
+        #Ahora tenemos que armar el delta (que es al reves que deltaAux)
+        for (key,value) in deltaAux:
+            for v2 in partes(value):
+                res.delta[v2] = partes(key)
+        self = res
 
-	def	toFile(self, file):
-		lineas = []
-		lineas.append( join('\t', self.estados) )
-		lineas.append( join('\t', self.alfabeto) )
-		lineas.append( self.estado_inicial )
-		lineas.append( join('\t', self.estados_finales) )
+    #devuelve sets
+    
 
-		for transicion in self.delta:
-			for (simbolo,estado) in self.delta[transicion]:
-				lineas.append(join('\t', [transicion, simbolo, estado]))
+    def minimizar(self):
+        return
 
-		file.write(join('\n', lineas))
-		return
+    def toFile(self, file):
+        lineas = []
+        lineas.append( join('\t', self.estados) )
+        lineas.append( join('\t', self.alfabeto) )
+        lineas.append( self.estado_inicial )
+        lineas.append( join('\t', self.estados_finales) )
 
-	def	toDOT(self, file):
-		return
+        for transicion in self.delta:
+            for (simbolo,estado) in self.delta[transicion]:
+                lineas.append(join('\t', [transicion, simbolo, estado]))
 
-	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
-	#Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
-	def	interseccion(self, adf1):
-		res = AFD()
-		#Estados y delta
-		for nodo1 in self.estados:
-			for nodo2 in afd1.estados:
-				res.agregar_estado(nodo1 + nodo2)
+        file.write(join('\n', lineas))
+        return
 
-				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
-					res.estados_finales.append(nodo1 + nodo2)
+    def toDOT(self, file):
+        return
 
-				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
-					res.estado_inicial = nodo1 + nodo2
+    #Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
+    #Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
+    def interseccion(self, adf1):
+        res = AFD()
+        #Estados y delta
+        for nodo1 in self.estados:
+            for nodo2 in afd1.estados:
+                res.agregar_estado(nodo1 + nodo2)
 
-				for (char1, estado1) in self.delta[nodo1]:
-					for (char2, estado2) in afd1.delta[nodo2]:
-						if(char1 == char2):
-							res.agregar_transicion(nodo1 + nodo2, char1, estado1 + estado2)
+                if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
+                    res.estados_finales.append(nodo1 + nodo2)
 
-		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
+                if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
+                    res.estado_inicial = nodo1 + nodo2
 
-		self = res
-		return
+                for (char1, estado1) in self.delta[nodo1]:
+                    for (char2, estado2) in afd1.delta[nodo2]:
+                        if(char1 == char2):
+                            res.agregar_transicion(nodo1 + nodo2, char1, estado1 + estado2)
 
-	def	complemento(self):
-		self.completar()
-		self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
-		
-	def completar(self):
-		self.agregar_estado("qTrampa")
-		for e in self.estados
-			charsAux = [char | (char,e1) in self.delta[e]]
-			for char in self.alfabeto
-				if char not in charsAux:
-					self.agregar_transicion(e,char,"qTrampa")
+        self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
 
-	def	equivalente(self, adf1):
-		return
+        self = res
+        return
+
+    def complemento(self):
+        self.completar()
+        self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
+        
+    def completar(self):
+        self.agregar_estado("qTrampa")
+        for e in self.estados
+            charsAux = [char | (char,e1) in self.delta[e]]
+            for char in self.alfabeto
+                if char not in charsAux:
+                    self.agregar_transicion(e,char,"qTrampa")
+
+    def equivalente(self, adf1):
+        return
