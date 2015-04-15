@@ -40,18 +40,18 @@ def createFromRegex(s):
 #casos base
 def letra(caracter):
 	res = AFD()
-	res.estados = ["q1", "q2"]
-	res.agregar_transicion("q1", caracter, "q2")
-	res.estados_finales = ["q2"];
+	res.estados = [1, 2]
+	res.agregar_transicion(1, caracter, 2)
+	res.estados_finales = [2];
 	res.alfabeto = [caracter];
-	res.estado_inicial = "q1";
+	res.estado_inicial = 1;
 	return res
 
 def lambdaAFD():
 	res = AFD()
-	res.estados = ["q1"]
-	res.estados_finales = ["q1"]
-	res.estado_inicial = "q1"
+	res.estados = [1]
+	res.estados_finales = [1]
+	res.estado_inicial = 1
 	return res
 
 def nuevoEstado(estado, anteriores):
@@ -71,11 +71,12 @@ def reorganizarEstados(i):
   return i+len(self.estados)
   #Habria que ver si es necesario devolverlo
 
+#TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def	fromFile(file):
 	afd = AFD();
 	auxEstados = file.next().split();
 	for est in auxEstados:
-		afd.agregar_estado(est);
+		afd.agregar_estado();
 	afd.alfabeto = file.next().split();
 	afd.estado_inicial = file.next();
 	afd.estados_finales = file.next().split();
@@ -85,8 +86,8 @@ def	fromFile(file):
 		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
 	return afd;
 		
-	def partes(lista):
-		return
+def partes(lista):
+	return
 		
 class AFD:
 
@@ -105,10 +106,11 @@ class AFD:
 		self.alfabeto = [];
 		self.estado_inicial = None;
 
-	def agregar_estado(self,estado):
-		if estado not in self.estados:
-			self.estados.append(estado);
-			self.delta[estado] = [];
+	def agregar_estado(self):
+		i = len(self.estados) +1
+		self.estados.append(i);
+		self.delta[i] = {};
+		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
 		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
@@ -122,7 +124,7 @@ class AFD:
 		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
 			return self.acepta_desde(aux[0],cadena.pop([0]));
-    else:
+    		else:
       return False;
 
 
@@ -242,6 +244,7 @@ class AFD:
 	
 
 	def	minimizar(self):
+
 		return
 
 	def	toFile(self, file):
