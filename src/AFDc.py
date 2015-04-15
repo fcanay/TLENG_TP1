@@ -26,13 +26,13 @@ def createFromRegex(s):
 		for x in xrange(1,s[8]-1):
 			afd.concat(createFromRegex(parts[x]))
 
-	else if s[0:5] == "{STAR}":
+	elif s[0:5] == "{STAR}":
 		afd.star()
-	else if s[0:5] == "{PLUS}":
+	elif s[0:5] == "{PLUS}":
 		afd.plus()
-	else if s[0:4] == "{OPT}":
+	elif s[0:4] == "{OPT}":
 		afd.opt()
-	else if s[0:3] == "{OR}":
+	elif s[0:3] == "{OR}":
 		for x in xrange(1,s[4]-1):
 			afd.orAFD(createFromRegex(parts[x]))
 	return afd
@@ -40,30 +40,43 @@ def createFromRegex(s):
 #casos base
 def letra(caracter):
 	res = AFD()
-	res.estados = ["q1", "q2"]
-	res.agregar_transicion("q1", caracter, "q2")
-	res.estados_finales = ["q2"];
+	res.estados = [1, 2]
+	res.agregar_transicion(1, caracter, 2)
+	res.estados_finales = [2];
 	res.alfabeto = [caracter];
-	res.estado_inicial = "q1";
+	res.estado_inicial = 1;
 	return res
 
 def lambdaAFD():
 	res = AFD()
-	res.estados = ["q1"]
-	res.estados_finales = ["q1"]
-	res.estado_inicial = "q1"
+	res.estados = [1]
+	res.estados_finales = [1]
+	res.estado_inicial = 1
 	return res
 
 def nuevoEstado(estado, anteriores):
-    valorFinal = estado + anteriores
-    return valorFinal
+    valorFinal = int(estado[1:]) + anteriores
+    return "q" + str(valorFinal)
 
+def reorganizarEstados(i):
+  i += len(self.estados)
+  for est in self.estados.reverse():
+    self.agregar_estado("q" + str(i))
+    for (simbolo,estado) in self.delta[est]:
+      self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+      sels.delta[est].remove((simbolo,estado)) 
+    i -= 1
+    self.estados.remove(est)
+    self.deta[est] = []
+  return i+len(self.estados)
+  #Habria que ver si es necesario devolverlo
 
+#TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def fromFile(file):
     afd = AFD();
     auxEstados = file.next().split();
     for est in auxEstados:
-        afd.agregar_estado(est);
+        afd.agregar_estado();
     afd.alfabeto = file.next().split();
     afd.estado_inicial = file.next();
     afd.estados_finales = file.next().split();
@@ -93,13 +106,14 @@ class AFD:
         self.alfabeto = [];
         self.estado_inicial = None;
 
-    def agregar_estado(self,estado):
-        if estado not in self.estados:
-            self.estados.append(estado);
-            self.delta[estado] = [];
+    def agregar_estado(self):
+        i = len(self.estados) +1
+        self.estados.append(i);
+        self.delta[i] = {};
+        return i
 
     def agregar_transicion(self,estado1,char,estado2):
-        if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
+        if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and \
         (not (char,estado2) in self.delta[estado1]):
             self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
@@ -110,8 +124,8 @@ class AFD:
         aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
         if aux.len != 0:
             return self.acepta_desde(aux[0],cadena.pop([0]));
-    else:
-      return False;
+        else:
+            return False;
 
 
     #casos recursivos
@@ -128,7 +142,7 @@ class AFD:
         
         #Nuevo Alfabeto
         self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
-    
+ 
     def reorganizarEstados(self, i):
       for est in self.estados:
         self.delta[est] = [e + i for e in self.delta[e]]
@@ -190,15 +204,6 @@ class AFD:
         return
 
 
-    # def reorganizarEstados(self, i):
-    #   for est in self.estados:
-    #       self.agregar_estado("q" + str(i))
-    #       for (simbolo,estado) in self.delta[est]:
-    #           self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-    #       i += 1
-    #   return i
-
-
     #Asumimos AFND y no AFND-lambda
     def determinizar(self):
         self.AFNDLambdaToAFND()
@@ -236,6 +241,7 @@ class AFD:
     
 
     def minimizar(self):
+
         return
 
     def toFile(self, file):
@@ -294,3 +300,4 @@ class AFD:
 
     def equivalente(self, adf1):
         return
+
