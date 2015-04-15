@@ -229,7 +229,6 @@ class AFD:
 	
 
 	def	minimizar(self):
-
 		return
 
 	def	toFile(self, file):
