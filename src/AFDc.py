@@ -192,16 +192,6 @@ class AFD:
         self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
         return
 
-
-	# def reorganizarEstados(self, i):
-	# 	for est in self.estados:
-	# 		self.agregar_estado("q" + str(i))
-	# 		for (simbolo,estado) in self.delta[est]:
-	# 			self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-	# 		i += 1
-	# 	return i
-
-
 	#Asumimos AFND y no AFND-lambda
 	def	determinizar(self):
 		self.AFNDLambdaToAFND()
