@@ -26,13 +26,13 @@ def createFromRegex(s):
 		for x in xrange(1,s[8]-1):
 			afd.concat(createFromRegex(parts[x]))
 
-	else if s[0:5] == "{STAR}":
+	elif s[0:5] == "{STAR}":
 		afd.star()
-	else if s[0:5] == "{PLUS}":
+	elif s[0:5] == "{PLUS}":
 		afd.plus()
-	else if s[0:4] == "{OPT}":
+	elif s[0:4] == "{OPT}":
 		afd.opt()
-	else if s[0:3] == "{OR}":
+	elif s[0:3] == "{OR}":
 		for x in xrange(1,s[4]-1):
 			afd.orAFD(createFromRegex(parts[x]))
 	return afd
@@ -58,37 +58,24 @@ def nuevoEstado(estado, anteriores):
     valorFinal = int(estado[1:]) + anteriores
     return "q" + str(valorFinal)
 
-def reorganizarEstados(i):
-  i += len(self.estados)
-  for est in self.estados.reverse():
-    self.agregar_estado("q" + str(i))
-    for (simbolo,estado) in self.delta[est]:
-      self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-      sels.delta[est].remove((simbolo,estado)) 
-    i -= 1
-    self.estados.remove(est)
-    self.deta[est] = []
-  return i+len(self.estados)
-  #Habria que ver si es necesario devolverlo
-
 #TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
-def	fromFile(file):
-	afd = AFD();
-	auxEstados = file.next().split();
-	for est in auxEstados:
-		afd.agregar_estado();
-	afd.alfabeto = file.next().split();
-	afd.estado_inicial = file.next();
-	afd.estados_finales = file.next().split();
+def fromFile(file):
+    afd = AFD();
+    auxEstados = file.next().split();
+    for est in auxEstados:
+        afd.agregar_estado();
+    afd.alfabeto = file.next().split();
+    afd.estado_inicial = file.next();
+    afd.estados_finales = file.next().split();
 
-	for line in file:
-		pieces = line.split()
-		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
-	return afd;
-		
+    for line in file:
+        pieces = line.split()
+        afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
+    return afd;
+        
 def partes(lista):
-	return
-		
+    return
+        
 class AFD:
 
 		# lista de estados del AFD
@@ -145,59 +132,65 @@ class AFD:
 		#Nuevo Alfabeto
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 
-	def star(self):
-		#Reorganizo estados y delta
-		estadoInicial = "q1"
-		i = self.reorganizarEstados(1)
-		estadoFinal = "q" + str(i+1)
-		self.agregar_estado(estadoFinal)
+	 def reorganizarEstados(self, i):
+      for est in self.estados:
+        self.delta[est] = [e + i for e in self.delta[e]]
+      self.estados = [est + i for est in self.estados]
+      self.estado_inicial += i
+      self.estados_finales = [est + i for est in self.estados_finales]
 
-		#Actualizo estados finales
-		for final in self.estados_finales:
-			self.agregar_transicion(final, nuestroLambda, estadoFinal)
-			self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
+    def star(self):
+        #Reorganizo estados y delta
+        estadoInicial = 1
+        self.reorganizarEstados(1)
+        estadoFinal = self.agregar_estado()
 
-		self.estados_finales = estadoFinal
+        #Actualizo estados finales
+        for final in self.estados_finales:
+            self.agregar_transicion(final, nuestroLambda, estadoFinal)
+            self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
 
-		#Actualizo estados inciales
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
+        self.estados_finales = estadoFinal
 
-		self.estado_inicial = estadoInicial
+        #Actualizo estados inciales
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
 
-		return
+        self.estado_inicial = estadoInicial
 
-	def plus(self):
-		return self.concat(self.star())
+        return
 
-	def opt(self):
-		return self.orAFD(lambdaAFD())
+    def plus(self):
+        return self.concat(self.star())
 
-	def orAFD(self, otroAFD):
-		#Reorganizo estados y delta
-		estadoInicial = "q1"
-		i = self.reorganizarEstados(1)
-		i = otroAFD.reorganizarEstados(i)
-		estadoFinal = "q" + str(i+1)
-		self.agregar_estado(estadoFinal)
+    def opt(self):
+        return self.orAFD(lambdaAFD())
 
-		#Actualizo estados finales
-		for final in self.estados_finales:
-			self.agregar_transicion(final, nuestroLambda, estadoFinal)
-		for final in otroAFD.estados_finales:
-			otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
+    def orAFD(self, otroAFD):
+        #Reorganizo estados y delta
+        estadoInicial = 1
+        i = self.reorganizarEstados(1)
+        i = otroAFD.reorganizarEstados(i)
+        estadoFinal = i+1
+        self.agregar_estado(estadoFinal)
 
-		self.estados_finales = estadoFinal
+        #Actualizo estados finales
+        for final in self.estados_finales:
+            self.agregar_transicion(final, nuestroLambda, estadoFinal)
+        for final in otroAFD.estados_finales:
+            otroAFD.agregar_transicion(final, nuestroLambda, estadoFinal)
 
-		#Actualizo estados inciales
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-		otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
+        self.estados_finales = estadoFinal
 
-		self.estado_inicial = estadoInicial
+        #Actualizo estados inciales
+        self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+        otroAFD.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
 
-		#Nuevo Alfabeto		
-		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
-		return
+        self.estado_inicial = estadoInicial
+
+        #Nuevo Alfabeto     
+        self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+        return
 
 
 	# def reorganizarEstados(self, i):
