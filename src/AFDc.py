@@ -13,6 +13,81 @@ def partition(s):
 			i+=1
 	return res
 
+def	fromRegex(regex_file):
+	lines = regex_file.readlines()
+	return  createFromRegex(lines)
+
+def createFromRegex(s):
+	if s[0] != '{':
+		return letra(s[0])
+	parts = partition(s)
+	afd = createFromRegex(parts[0])
+	if s[0:7] == "{CONCAT}":
+		for x in xrange(1,s[8]-1):
+			afd.concat(createFromRegex(parts[x]))
+
+	else if s[0:5] == "{STAR}":
+		afd.star()
+	else if s[0:5] == "{PLUS}":
+		afd.plus()
+	else if s[0:4] == "{OPT}":
+		afd.opt()
+	else if s[0:3] == "{OR}":
+		for x in xrange(1,s[4]-1):
+			afd.orAFD(createFromRegex(parts[x]))
+	return afd
+
+#casos base
+def letra(caracter):
+	res = AFD()
+	res.estados = ["q1", "q2"]
+	res.agregar_transicion("q1", caracter, "q2")
+	res.estados_finales = ["q2"];
+	res.alfabeto = [caracter];
+	res.estado_inicial = "q1";
+	return res
+
+def lambdaAFD():
+	res = AFD()
+	res.estados = ["q1"]
+	res.estados_finales = ["q1"]
+	res.estado_inicial = "q1"
+	return res
+
+def nuevoEstado(estado, anteriores):
+    valorFinal = int(estado[1:]) + anteriores
+    return "q" + str(valorFinal)
+
+def reorganizarEstados(i):
+  i += len(self.estados)
+  for est in self.estados.reverse():
+    self.agregar_estado("q" + str(i))
+    for (simbolo,estado) in self.delta[est]:
+      self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
+      sels.delta[est].remove((simbolo,estado)) 
+    i -= 1
+    self.estados.remove(est)
+    self.deta[est] = []
+  return i+len(self.estados)
+  #Habria que ver si es necesario devolverlo
+
+def	fromFile(file):
+	afd = AFD();
+	auxEstados = file.next().split();
+	for est in auxEstados:
+		afd.agregar_estado(est);
+	afd.alfabeto = file.next().split();
+	afd.estado_inicial = file.next();
+	afd.estados_finales = file.next().split();
+
+	for line in file:
+		pieces = line.split()
+		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
+	return afd;
+		
+	def partes(lista):
+		return
+		
 class AFD:
 
 		# lista de estados del AFD
@@ -50,46 +125,6 @@ class AFD:
     else:
       return False;
 
-	def	fromRegex(self, regex_file):
-		lines = regex_file.readlines()
-		return  createFromRegex(lines)
-
-	def createFromRegex(s):
-		if s[0] != '{':
-			return letra(s[0])
-		parts = partition(s)
-		afd = createFromRegex(parts[0])
-		if s[0:7] == "{CONCAT}":
-			for x in xrange(1,s[8]-1):
-				afd.concat(createFromRegex(parts[x]))
-
-		else if s[0:5] == "{STAR}":
-			afd.star()
-		else if s[0:5] == "{PLUS}":
-			afd.plus()
-		else if s[0:4] == "{OPT}":
-			afd.opt()
-		else if s[0:3] == "{OR}":
-			for x in xrange(1,s[4]-1):
-				afd.orAFD(createFromRegex(parts[x]))
-		return afd
-
-	#casos base
-	def letra(caracter):
-		res = AFD()
-		res.estados = ["q1", "q2"]
-		res.agregar_transicion("q1", caracter, "q2")
-		res.estados_finales = ["q2"];
-		res.alfabeto = [caracter];
-		res.estado_inicial = "q1";
-		return res
-
-	def lambdaAFD():
-		res = AFD()
-		res.estados = ["q1"]
-		res.estados_finales = ["q1"]
-		res.estado_inicial = "q1"
-		return res
 
 	#casos recursivos
 	def concat(self, otroAFD):
@@ -160,9 +195,6 @@ class AFD:
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 		return
 
-  def nuevoEstado(estado, anteriores):
-    valorFinal = int(estado[1:]) + anteriores
-    return "q" + str(valorFinal)
 
 	# def reorganizarEstados(self, i):
 	# 	for est in self.estados:
@@ -172,32 +204,6 @@ class AFD:
 	# 		i += 1
 	# 	return i
 
-  def reorganizarEstados(self, i):
-    i += len(self.estados)
-    for est in self.estados.reverse():
-      self.agregar_estado("q" + str(i))
-      for (simbolo,estado) in self.delta[est]:
-        self.agregar_transicion("q" + str(i), simbolo, nuevoEstado(estado, i))
-        sels.delta[est].remove((simbolo,estado)) 
-      i -= 1
-      self.estados.remove(est)
-      self.deta[est] = []
-    return i+len(self.estados)
-    #Habria que ver si es necesario devolverlo
-
-	def	fromFile(self,file):
-		afd = AFD();
-		auxEstados = file.next().split();
-		for est in auxEstados:
-			afd.agregar_estado(est);
-		afd.alfabeto = file.next().split();
-		afd.estado_inicial = file.next();
-		afd.estados_finales = file.next().split();
-
-		for line in file:
-			pieces = line.split()
-			afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
-		return afd;
 
 	#Asumimos AFND y no AFND-lambda
 	def	determinizar(self):
@@ -233,8 +239,7 @@ class AFD:
 		self = res
 
 	#devuelve sets
-	def partes(lista):
-		return
+	
 
 	def	minimizar(self):
 		return
