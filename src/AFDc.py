@@ -121,17 +121,19 @@ class AFD:
 		self.acepta_desde(self.estado_inicial,cadena);
 
 	def	acepta_desde(self,estado,cadena):
+		if len(cadena) == 0:
+			return estado in self.estados_finales
 		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
 			return self.acepta_desde(aux[0],cadena.pop([0]));
-    		else:
-      return False;
+		else:
+			return False;
 
 
 	#casos recursivos
 	def concat(self, otroAFD):
 		#Reorganizo estados y delta
-		otroAFD.reorganizarEstados(len(self.estados) + 1)
+		otroAFD.reorganizarEstados(len(self.estados))
 
 		# lambda es ' '. Checkear que onda con "acepta"
 		#Actualizo estados finales
@@ -271,35 +273,45 @@ class AFD:
 		#Estados y delta
 		for nodo1 in self.estados:
 			for nodo2 in afd1.estados:
-				res.agregar_estado(nodo1 + nodo2)
+				res.agregar_estado((nodo1,nodo2))
 
 				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
-					res.estados_finales.append(nodo1 + nodo2)
+					res.estados_finales.append((nodo1,nodo2))
 
 				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
-					res.estado_inicial = nodo1 + nodo2
+					res.estado_inicial = (nodo1,nodo2)
 
 				for (char1, estado1) in self.delta[nodo1]:
 					for (char2, estado2) in afd1.delta[nodo2]:
 						if(char1 == char2):
-							res.agregar_transicion(nodo1 + nodo2, char1, estado1 + estado2)
+							res.agregar_transicion((nodo1,nodo2), char1, (estado1,estado2))
 
+		res.reorganizarParesEstados(len(self.estados),len(adf1.estados))
 		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
 
 		self = res
 		return
+
+	def reorganizarParesEstados(self,i,j):
+		deltaAux = {}
+		for (a,b) in self.estados:
+			deltaAux[a*i+(b-1)*j] = [ c*i+(d-1)*j | (c,d) in self.delta[a*i+(b-1)*j]]
+		self.delta = deltaAux
+		self.estados = [ a*i+(b-1)*j | (a,b) in self.estados]
+		self.estado_inicial = self.estado_inicial[0]*i+(self.estado_inicial[1]-1)*j
+		self.estados_finales = [ a*i+(b-1)*j | (a,b) in self.estados_finales]
 
 	def	complemento(self):
 		self.completar()
 		self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
 		
 	def completar(self):
-		self.agregar_estado("qTrampa")
+		i = self.agregar_estado()
 		for e in self.estados
 			charsAux = [char | (char,e1) in self.delta[e]]
 			for char in self.alfabeto
 				if char not in charsAux:
-					self.agregar_transicion(e,char,"qTrampa")
+					self.agregar_transicion(e,char,i)
 
 	def	equivalente(self, adf1):
 		return
