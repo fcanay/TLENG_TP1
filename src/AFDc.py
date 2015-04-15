@@ -194,6 +194,7 @@ class AFD:
 	def AFNDLambdaToAFND(self):
 		return
 
+	#TODO: TESTEAR
 	def AFNDToAFD(self):
 		res = AFD()
 		res.estados = partes(self.estados)
@@ -203,8 +204,8 @@ class AFD:
 
 		#deltaAux tiene "a donde llego", "desde donde"
 		deltaAux = {}
-		for letra in res.alfabeto:
-			for est in res.estados:
+		for letra in self.alfabeto:
+			for est in self.estados:
 				estadosAux = set([ x | (a,x) in self.delta[est], a == letra ])
 				if(estadosAux in deltaAux[letra]):
 					deltaAux[letra][estadosAux].add(est)
@@ -213,7 +214,8 @@ class AFD:
 
 		#Ahora tenemos que armar el delta (que es al reves que deltaAux)
 		for (key,value) in deltaAux:
-			res.delta[value] = key
+			for v2 in partes(value):
+				res.delta[v2] = partes(key)
 		self = res
 
 	#devuelve sets
