@@ -193,8 +193,8 @@ class AFD:
 	def determinizar(self):
 		res = AFD()
 		res.alfabeto = self.alfabeto
-		res.estado_inicial = set(ClausuraLamda(self.estado_inicial))
-		porRecorrer = set(res.estado_inicial)
+		res.estado_inicial = set(self.ClausuraLamda(self.estado_inicial))
+		porRecorrer = set([res.estado_inicial])
 
 		while len( porRecorrer ) > 0:
 			#El nodo es un conjunto de estados de self
@@ -223,50 +223,24 @@ class AFD:
 			aux.union([e for (c,e) in self.delta[est], c == char])
 		res = set()
 		for e in aux:
-			res.union(ClausuraLamda(e))
+			res.union(self.ClausuraLamda(e))
 
 	def ClausuraLamda(self,e):
-		res = set(e)
-		porRecorrer = set(e)  
+		res = set([e])
+		porRecorrer = set([e])  
 		while len(porRecorrer) > 0:
-			aux = res.intersection(aUnPasoLamda(porRecorrer.pop()))
+			aux = res.intersection(self.aUnPasoLamda(porRecorrer.pop()))
 			res.union(aux)
 			porRecorrer.union(aux)
 		return res
 
 
 	def aUnPasoLamda(self,e):
+		print "self"
+		print self.delta
+		print "e"
+		print  e
 		return set([ x for (char,x) in self.delta[e], x!=e and char == nuestroLambda])
-
-
-	def AFNDLambdaToAFND(self):
-		return
-
-	#TODO: TESTEAR
-	def AFNDToAFD(self):
-		res = AFD()
-		res.estados = partes(self.estados)
-		res.estado_inicial = set(self.estado_inicial)
-		res.estados_finales = set([ x for x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
-		res.alfabeto = self.alfabeto
-
-		#deltaAux tiene "a donde llego", "desde donde"
-		deltaAux = {}
-		for letra in self.alfabeto:
-			for est in self.estados:
-				estadosAux = set([ x for (a,x) in self.delta[est], a == letra ])
-				if(estadosAux in deltaAux[letra]):
-					deltaAux[letra][estadosAux].add(est)
-				else:
-					deltaAux[letra][estadosAux] = set(est)
-
-		#Ahora tenemos que armar el delta (que es al reves que deltaAux)
-		for (key,value) in deltaAux:
-			for v2 in partes(value):
-				res.delta[v2] = partes(key)
-		self = res
-
-	#devuelve sets
 	
 
 	#Minimizar se llama siempre que el AF sea deterministico
