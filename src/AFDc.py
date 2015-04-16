@@ -253,8 +253,70 @@ class AFD:
 	#devuelve sets
 	
 
+	#Minimizar se llama siempre que el AF sea deterministico
 	def	minimizar(self):
+		self.completar()
+		clasesEquiv, matrizDeResultados = self.dameClasesEquiv()
+
+		#Crear el nuevo AFD
+		res = AFD()
+		res.estados = clasesDeEquiv.keys()
+		res.alfabeto = self.alfabeto
+		res.estado_inicial = clasesEquiv[self.estado_inicial]
+		for f in estados_finales:
+			if clasesEquiv[f] not in res.estados_finales:
+				res.estados_finales.append(clasesEquiv[f])
+
+		for est in res.estados:
+			for (char, est2) in matrizDeResultados[est]:
+				res.delta[est].append((char, est2))
+
+		self = res
 		return
+
+	def dameClasesEquiv(self):
+		congruenciaVieja = {}
+		congruenciaNueva = {}
+		matrizDeResultados = {} #dado un estado, me da una lista de pares (caracter, clase de equivalencia)
+
+		#Congruencia 0. Los finales van al 2, los otros al 1
+		for est in self.estados:
+			if est in self.estados_finales:
+				congruenciaNueva[est] = 2
+			else:
+				congruenciaNueva[est] = 1
+
+		while congruenciaVieja != congruenciaNueva:
+			#Preparo para un nuevo loop
+			matrizDeResultados = {}
+			congruenciaVieja = congruenciaNueva
+			congruenciaNueva = {}
+
+			#Completamos la matriz de resultados
+			for est in self.estados:
+				matrizDeResultados[est] = []
+				for letra in self.alfabeto:
+					matrizDeResultados[est].append( (letra, congruenciaVieja[self.dameTransicion(est, letra)]) )
+
+			#Creamos la nueva congruencia
+			clasesDeEquiv = [] #Lista de pares(clase equiv de congruencia anterior, [clase equiv que vienen de matrizDeResultados])
+			for est in self.estados:
+				#claseActual es local al for
+				claseActual = (congruenciaVieja[est], matrizDeResultados[est])	
+				
+				if not(claseActual in clasesDeEquiv):
+					clasesDeEquiv.append(claseActual)
+				
+				congruenciaNueva[est] = clasesDeEquiv.index(claseActual) + 1
+			
+		return congruenciaNueva, matrizDeResultados
+
+
+	#Solo usar si sabes que esta
+	def dameTransicion(self, est, letra):
+		for (char,estado) in self.delta[est]:
+			if char == letra:
+				return estado
 
 	def	toFile(self, file):
 		lineas = []
