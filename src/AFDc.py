@@ -100,8 +100,7 @@ class AFD:
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and 
-		(not (char,estado2) in self.delta[estado1]):
+		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and (not (char,estado2) in self.delta[estado1]):
 			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
@@ -132,14 +131,14 @@ class AFD:
 		#Nuevo Alfabeto
 		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
 
-	 def reorganizarEstados(self, i):
-	 deltaAux = {}
-      for est in self.estados:
-        deltaAux[est] = [e + i for e in self.delta[e]]
-      self.delta = deltaAux
-      self.estados = [est + i for est in self.estados]
-      self.estado_inicial += i
-      self.estados_finales = [est + i for est in self.estados_finales]
+	def reorganizarEstados(self, i):
+		deltaAux = {}
+	      for est in self.estados:
+	      	deltaAux[est] = [e + i for e in self.delta[e]]
+	      self.delta = deltaAux
+	      self.estados = [est + i for est in self.estados]
+	      self.estado_inicial += i
+	      self.estados_finales = [est + i for est in self.estados_finales]
 
     def star(self):
         #Reorganizo estados y delta
@@ -197,6 +196,32 @@ class AFD:
 		self.AFNDLambdaToAFND()
 		self.AFNDToAFD()
 		return
+
+	def Mover(self,est,char):
+		res = MoverSinLamdaInicio(self,est,char)
+		aux = ClausuraLamda(est)
+		for e in aux:
+			res.union(MoverSinLamdaInicio(e))
+
+	def MoverSinLamdaInicio(self,est,char):
+		res = set()
+		aux = [e | (c,e) in self.delta[est], c==char]
+		for e in aux:
+			res.union(ClausuraLamda(e))
+
+	def ClausuraLamda(self,e):
+		res = set(e)
+		porRecorrer = set(e)  
+		while len(porRecorrer) > 0:
+			aux = res.intersection(aUnPasoLamda(porRecorrer.pop()))
+			res.union(aux)
+			porRecorrer.union(aux)
+		return res
+
+
+	def aUnPasoLamda(self,e):
+		return set([ x | (char,x) in self.delta[e], x!=e and char = nuestroLambda])
+
 
 	def AFNDLambdaToAFND(self):
 		return
