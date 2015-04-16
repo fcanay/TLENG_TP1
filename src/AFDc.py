@@ -140,56 +140,56 @@ class AFD:
 			self.estado_inicial += i
 			self.estados_finales = [est + i for est in self.estados_finales]
 
-		def star(self):
-			#Reorganizo estados y delta
-			estadoInicial = self.agregar_estado() 
-			estadoFinal = self.agregar_estado()
+	def star(self):
+		#Reorganizo estados y delta
+		estadoInicial = self.agregar_estado() 
+		estadoFinal = self.agregar_estado()
 
-			#Actualizo estados finales
-			for final in self.estados_finales:
-				self.agregar_transicion(final, nuestroLambda, estadoFinal)
-				self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
+		#Actualizo estados finales
+		for final in self.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, estadoFinal)
+			self.agregar_transicion(final, nuestroLambda, self.estado_inicial)
 
-			self.estados_finales = [estadoFinal]
+		self.estados_finales = [estadoFinal]
 
-			#Actualizo estados inciales
-			self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-			self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
+		#Actualizo estados inciales
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
 
-			self.estado_inicial = estadoInicial
+		self.estado_inicial = estadoInicial
 
-			return
+		return
 
-		def plus(self):
-			return self.concat(self.star())
+	def plus(self):
+		return self.concat(self.star())
 
-		def opt(self):
-			return self.orAFD(lambdaAFD())
+	def opt(self):
+		return self.orAFD(lambdaAFD())
 
-		def orAFD(self, otroAFD):
-			#Reorganizo estados y delta
-			estadoInicial = self.agregar_estado()
-			estadoFinal = self.agregar_estado()
-			otroAFD.reorganizarEstados(len(self.estados))
-			for x in xrange(1,len(otroAFD.estados)):
-				self.agregar_estado()
-			#Actualizo estados finales
-			for final in self.estados_finales:
-				self.agregar_transicion(final, nuestroLambda, estadoFinal)
-			for final in otroAFD.estados_finales:
-				self.agregar_transicion(final, nuestroLambda, estadoFinal)
+	def orAFD(self, otroAFD):
+		#Reorganizo estados y delta
+		estadoInicial = self.agregar_estado()
+		estadoFinal = self.agregar_estado()
+		otroAFD.reorganizarEstados(len(self.estados))
+		for x in xrange(1,len(otroAFD.estados)):
+			self.agregar_estado()
+		#Actualizo estados finales
+		for final in self.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, estadoFinal)
+		for final in otroAFD.estados_finales:
+			self.agregar_transicion(final, nuestroLambda, estadoFinal)
 
-			self.estados_finales = estadoFinal
+		self.estados_finales = estadoFinal
 
-			#Actualizo estados inciales
-			self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-			self.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
+		#Actualizo estados inciales
+		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
+		self.agregar_transicion(estadoInicial, nuestroLambda, otroAFD.estado_inicial)
 
-			self.estado_inicial = estadoInicial
+		self.estado_inicial = estadoInicial
 
-			#Nuevo Alfabeto     
-			self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
-			return
+		#Nuevo Alfabeto     
+		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+		return
 
 	#Asumimos AFND y no AFND-lambda
 	def	determinizar(self):
@@ -393,6 +393,18 @@ class AFD:
 			for char in self.alfabeto
 				if char not in charsAux:
 					self.agregar_transicion(e,char,i)
+
+	def nodosToInt(self):
+		dicc = {}
+		estados = [1..len(self.estados)]
+		deltaAux = {}
+		for i in estados:
+			dicc[self.estados[i]] = i
+		for i in estados:
+			deltaAux[i] = [ (c,dicc[e]) | (c,e) in delta[self.estados[i]]]
+
+		self.estados=estados
+		self.delta=deltaAux
 
 	def	equivalente(self, adf1):
 		return
