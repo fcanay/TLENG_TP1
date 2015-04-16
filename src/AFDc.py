@@ -55,15 +55,24 @@ def lambdaAFD():
 	return res
 
 def nuevoEstado(estado, anteriores):
+<<<<<<< HEAD
 	valorFinal = int(estado[1:]) + anteriores
 	return "q" + str(valorFinal)
+=======
+		valorFinal = int(estado[1:]) + anteriores
+		return "q" + str(valorFinal)
+>>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 
 #TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def fromFile(file):
 	afd = AFD();
 	auxEstados = file.next().split();
 	for est in auxEstados:
+<<<<<<< HEAD
 		afd.agregar_estado();
+=======
+			afd.agregar_estado();
+>>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 	afd.alfabeto = file.next().split();
 	afd.estado_inicial = file.next();
 	afd.estados_finales = file.next().split();
@@ -72,10 +81,17 @@ def fromFile(file):
 		pieces = line.split()
 		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
 	return afd;
+<<<<<<< HEAD
 		
 def partes(lista):
 	return
 		
+=======
+			
+def partes(lista):
+		return
+				
+>>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 class AFD:
 
 		# lista de estados del AFD
@@ -133,12 +149,21 @@ class AFD:
 
 	def reorganizarEstados(self, i):
 		deltaAux = {}
+<<<<<<< HEAD
 		  for est in self.estados:
 			deltaAux[est] = [e + i for e in self.delta[e]]
 		  self.delta = deltaAux
 		  self.estados = [est + i for est in self.estados]
 		  self.estado_inicial += i
 		  self.estados_finales = [est + i for est in self.estados_finales]
+=======
+			for est in self.estados:
+				deltaAux[est] = [e + i for e in self.delta[e]]
+			self.delta = deltaAux
+			self.estados = [est + i for est in self.estados]
+			self.estado_inicial += i
+			self.estados_finales = [est + i for est in self.estados_finales]
+>>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 
 	def star(self):
 		#Reorganizo estados y delta
@@ -399,5 +424,21 @@ class AFD:
 				if char not in charsAux:
 					self.agregar_transicion(e,char,i)
 
+<<<<<<< HEAD
 	def equivalente(self, adf1):
+=======
+	def nodosToInt(self):
+		dicc = {}
+		estados = [1..len(self.estados)]
+		deltaAux = {}
+		for i in estados:
+			dicc[self.estados[i]] = i
+		for i in estados:
+			deltaAux[i] = [ (c,dicc[e]) | (c,e) in delta[self.estados[i]]]
+
+		self.estados=estados
+		self.delta=deltaAux
+
+	def	equivalente(self, adf1):
+>>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 		return
