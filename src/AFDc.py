@@ -19,6 +19,8 @@ def fromRegex(regex_file):
 
 def createFromRegex(s):
 	if s[0] != '{':
+		if s[0] == '\\' and len(s) > 1 and s[1] == 't':
+			return letra('\t')
 		return letra(s[0])
 	parts = partition(s)
 	afd = createFromRegex(parts[0])
