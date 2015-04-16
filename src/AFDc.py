@@ -1,3 +1,6 @@
+import sys
+import os
+
 nuestroLambda = " "
 
 #auxiliares
@@ -336,16 +339,19 @@ class AFD:
 
 	def toFile(self, file):
 		lineas = []
-		lineas.append( join('\t', self.estados) )
-		lineas.append( join('\t', self.alfabeto) )
+		tab = "\t"
+		lineas.append( tab.join(self.estados) )
+		lineas.append( tab.join(self.alfabeto) )
 		lineas.append( self.estado_inicial )
-		lineas.append( join('\t', self.estados_finales) )
+		lineas.append( tab.join(self.estados_finales) )
 
 		for transicion in self.delta:
 			for (simbolo,estado) in self.delta[transicion]:
-				lineas.append(join('\t', [transicion, simbolo, estado]))
+				tab.join([transicion, simbolo, estado])
 
-		file.write(join('\n', lineas))
+		#TODO REVISAR
+		nuevaLinea = "\n"
+		nuevaLinea.join(lineas)
 		return
 
 	def toDOT(self, file):
@@ -367,10 +373,10 @@ class AFD:
 				if est2 in letrasAImprimir:
 					letrasAImprimir[est2].append(letra)
 				else:
-					letrasAImprimir[est2] = letra;
+					letrasAImprimir[est2] = [letra]
 
 			for est in letrasAImprimir:
-				file.write(str(est) + " -> " + str (est2) + "[label=\""
+				file.write(str(est) + " -> " + str (est2) + "[label=\"")
 				for letra in letrasAImprimir[est]:
 					if letra == letrasAImprimir[0]:
 						file.write(letra)
