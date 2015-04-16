@@ -197,11 +197,13 @@ class AFD:
 		self.AFNDToAFD()
 		return
 
-	def Mover(self,est,char):
-		res = MoverSinLamdaInicio(self,est,char)
-		aux = ClausuraLamda(est)
+	def Mover(self,ests,char):
+		aux = set()
+		for est in ests:
+			aux.union([e | (c,e) in self.delta[est], c == char])
+		res = set()
 		for e in aux:
-			res.union(MoverSinLamdaInicio(e))
+			res.union(ClausuraLamda(e))
 
 	def MoverSinLamdaInicio(self,est,char):
 		res = set()
