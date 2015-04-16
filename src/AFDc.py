@@ -347,6 +347,36 @@ class AFD:
 		return
 
 	def toDOT(self, file):
+		file.write("strict digraph {\n")
+		file.write("\trankdir=LR\n")
+		file.write("\tnode [shape = none, label \"\", width = 0, height = 0]; qd \n")
+		file.write("\tnode [label=\"\\N\", width = 0.5, width = 0.5];\n")
+		file.write("\tnode [shape = doublecircle];")
+		
+		for est in self.estados_finales:
+			file.write(" " + str(est))
+		file.write(";")
+
+		file.write("qd -> " + str(self.estado_inicial) + "\n")
+
+		for est in self.estados:
+			letrasAImprimir = {}
+			for (letra, est2) in self.delta[est]:
+				if est2 in letrasAImprimir:
+					letrasAImprimir[est2].append(letra)
+				else:
+					letrasAImprimir[est2] = letra;
+
+			for est in letrasAImprimir:
+				file.write(str(est) + " -> " + str (est2) + "[label=\""
+				for letra in letrasAImprimir[est]:
+					if letra == letrasAImprimir[0]:
+						file.write(letra)
+					else:
+						file.write(", " + letra)
+				file.write("\"]\n")
+
+		file.write("}")
 		return
 
 	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
@@ -396,8 +426,8 @@ class AFD:
 		for i in estados:
 			deltaAux[i] = [ (c,dicc[e]) for (c,e) in delta[self.estados[i]]]
 
-		self.estados=estados
-		self.delta=deltaAux
+		self.estados = estados
+		self.delta = deltaAux
 
 	def	equivalente(self, adf1):
 		return
