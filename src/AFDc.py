@@ -234,7 +234,7 @@ class AFD:
 
 
 	def aUnPasoLamda(self,e):
-		return set([ x for (char,x) in self.delta[e], x!=e and char = nuestroLambda])
+		return set([ x for (char,x) in self.delta[e], x!=e and char == nuestroLambda])
 
 
 	def AFNDLambdaToAFND(self):
@@ -381,9 +381,9 @@ class AFD:
 		
 	def completar(self):
 		i = self.agregar_estado()
-		for e in self.estados
+		for e in self.estados:
 			charsAux = [char for (char,e1) in self.delta[e]]
-			for char in self.alfabeto
+			for char in self.alfabeto:
 				if char not in charsAux:
 					self.agregar_transicion(e,char,i)
 
