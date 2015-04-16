@@ -96,7 +96,7 @@ class AFD:
 	def agregar_estado(self):
 		i = len(self.estados) +1
 		self.estados.append(i);
-		self.delta[i] = {};
+		self.delta[i] = [];
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
@@ -193,21 +193,31 @@ class AFD:
 
 	#Asumimos AFND y no AFND-lambda
 	def	determinizar(self):
-		self.AFNDLambdaToAFND()
-		self.AFNDToAFD()
-		return
+		res = AFD()
+		res.alfabeto = self.alfabeto
+		res.estado_inicial = set(ClausuraLamda(self.estado_inicial))
+		porRecorrer = set(res.estado_inicial)
+		while len(porRecorrer) > 0:
+			nodo = porRecorrer.pop()
+			res.estados.append(porRecorrer)
+			res.delta[nodo] = []
+			for a in self.alfabeto:
+				aux = self.Mover(nodo,a)
+				res.delta[nodo].append((a,aux))
+				if aux not in res.estados:
+					porRecorrer.add(aux)
+		for e in res.estados:
+			for f in self.estados_finales:
+				if f in e:
+					res.estados_finales.append(e)
+					break
+		self = res
 
 	def Mover(self,ests,char):
 		aux = set()
 		for est in ests:
 			aux.union([e | (c,e) in self.delta[est], c == char])
 		res = set()
-		for e in aux:
-			res.union(ClausuraLamda(e))
-
-	def MoverSinLamdaInicio(self,est,char):
-		res = set()
-		aux = [e | (c,e) in self.delta[est], c==char]
 		for e in aux:
 			res.union(ClausuraLamda(e))
 
