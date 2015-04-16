@@ -199,16 +199,16 @@ class AFD:
 		porRecorrer = set(res.estado_inicial)
 
 		while len( porRecorrer ) > 0:
-			conj = porRecorrer.pop()
-			res.estados.append(conj)
-			res.delta[conj] = []
+			#El nodo es un conjunto de estados de self
+			nodo = porRecorrer.pop()
+			res.estados.append(nodo)
+			res.delta[nodo] = []
 
 			for a in self.alfabeto:
-				aux = self.Mover(conj, a)
-				res.delta[conj].append((a, aux))
+				aux = self.Mover(nodo, a)
+				res.delta[nodo].append((a, aux))
 				if aux not in res.estados:
 					porRecorrer.add(aux)
-					res.estados.append(aux)
 					
 		for e in res.estados:
 			for f in self.estados_finales:
