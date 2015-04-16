@@ -54,25 +54,12 @@ def lambdaAFD():
 	res.estado_inicial = 1
 	return res
 
-def nuevoEstado(estado, anteriores):
-<<<<<<< HEAD
-	valorFinal = int(estado[1:]) + anteriores
-	return "q" + str(valorFinal)
-=======
-		valorFinal = int(estado[1:]) + anteriores
-		return "q" + str(valorFinal)
->>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
-
 #TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def fromFile(file):
 	afd = AFD();
 	auxEstados = file.next().split();
 	for est in auxEstados:
-<<<<<<< HEAD
 		afd.agregar_estado();
-=======
-			afd.agregar_estado();
->>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 	afd.alfabeto = file.next().split();
 	afd.estado_inicial = file.next();
 	afd.estados_finales = file.next().split();
@@ -81,17 +68,10 @@ def fromFile(file):
 		pieces = line.split()
 		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
 	return afd;
-<<<<<<< HEAD
 		
 def partes(lista):
 	return
 		
-=======
-			
-def partes(lista):
-		return
-				
->>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 class AFD:
 
 		# lista de estados del AFD
@@ -125,7 +105,7 @@ class AFD:
 	def acepta_desde(self,estado,cadena):
 		if len(cadena) == 0:
 			return estado in self.estados_finales
-		aux = [ est | (char,est) in self.delta[estado], char == cadena[0]];
+		aux = [ est for (char,est) in self.delta[estado], char == cadena[0]];
 		if aux.len != 0:
 			return self.acepta_desde(aux[0],cadena.pop([0]));
 		else:
@@ -149,21 +129,12 @@ class AFD:
 
 	def reorganizarEstados(self, i):
 		deltaAux = {}
-<<<<<<< HEAD
-		  for est in self.estados:
+		for est in self.estados:
 			deltaAux[est] = [e + i for e in self.delta[e]]
-		  self.delta = deltaAux
-		  self.estados = [est + i for est in self.estados]
-		  self.estado_inicial += i
-		  self.estados_finales = [est + i for est in self.estados_finales]
-=======
-			for est in self.estados:
-				deltaAux[est] = [e + i for e in self.delta[e]]
-			self.delta = deltaAux
-			self.estados = [est + i for est in self.estados]
-			self.estado_inicial += i
-			self.estados_finales = [est + i for est in self.estados_finales]
->>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
+		self.delta = deltaAux
+		self.estados = [est + i for est in self.estados]
+		self.estado_inicial += i
+		self.estados_finales = [est + i for est in self.estados_finales]
 
 	def star(self):
 		#Reorganizo estados y delta
@@ -241,12 +212,13 @@ class AFD:
 					res.estados_finales.append(e)
 					break
 
+		res.nodosToInt()
 		self = res
 
 	def Mover(self,ests,char):
 		aux = set()
 		for est in ests:
-			aux.union([e | (c,e) in self.delta[est], c == char])
+			aux.union([e for (c,e) in self.delta[est], c == char])
 		res = set()
 		for e in aux:
 			res.union(ClausuraLamda(e))
@@ -262,7 +234,7 @@ class AFD:
 
 
 	def aUnPasoLamda(self,e):
-		return set([ x | (char,x) in self.delta[e], x!=e and char = nuestroLambda])
+		return set([ x for (char,x) in self.delta[e], x!=e and char = nuestroLambda])
 
 
 	def AFNDLambdaToAFND(self):
@@ -273,14 +245,14 @@ class AFD:
 		res = AFD()
 		res.estados = partes(self.estados)
 		res.estado_inicial = set(self.estado_inicial)
-		res.estados_finales = set([ x | x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
+		res.estados_finales = set([ x for x in res.estados, len(x.intersection(set(self.estados_finales))) > 0])
 		res.alfabeto = self.alfabeto
 
 		#deltaAux tiene "a donde llego", "desde donde"
 		deltaAux = {}
 		for letra in self.alfabeto:
 			for est in self.estados:
-				estadosAux = set([ x | (a,x) in self.delta[est], a == letra ])
+				estadosAux = set([ x for (a,x) in self.delta[est], a == letra ])
 				if(estadosAux in deltaAux[letra]):
 					deltaAux[letra][estadosAux].add(est)
 				else:
@@ -397,36 +369,24 @@ class AFD:
 						if(char1 == char2):
 							res.agregar_transicion((nodo1,nodo2), char1, (estado1,estado2))
 
-		res.reorganizarParesEstados(len(self.estados),len(adf1.estados))
+		res.nodosToInt()
 		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
 
 		self = res
 		return
 
-	def reorganizarParesEstados(self,i,j):
-		deltaAux = {}
-		for (a,b) in self.estados:
-			deltaAux[a*i+(b-1)*j] = [ c*i+(d-1)*j | (c,d) in self.delta[a*i+(b-1)*j]]
-		self.delta = deltaAux
-		self.estados = [ a*i+(b-1)*j | (a,b) in self.estados]
-		self.estado_inicial = self.estado_inicial[0]*i+(self.estado_inicial[1]-1)*j
-		self.estados_finales = [ a*i+(b-1)*j | (a,b) in self.estados_finales]
-
 	def complemento(self):
 		self.completar()
-		self.estados_finales = [estado | estado in self.estados, estado not in self.estados_finales]
+		self.estados_finales = [estado for estado in self.estados, estado not in self.estados_finales]
 		
 	def completar(self):
 		i = self.agregar_estado()
 		for e in self.estados
-			charsAux = [char | (char,e1) in self.delta[e]]
+			charsAux = [char for (char,e1) in self.delta[e]]
 			for char in self.alfabeto
 				if char not in charsAux:
 					self.agregar_transicion(e,char,i)
 
-<<<<<<< HEAD
-	def equivalente(self, adf1):
-=======
 	def nodosToInt(self):
 		dicc = {}
 		estados = [1..len(self.estados)]
@@ -434,11 +394,10 @@ class AFD:
 		for i in estados:
 			dicc[self.estados[i]] = i
 		for i in estados:
-			deltaAux[i] = [ (c,dicc[e]) | (c,e) in delta[self.estados[i]]]
+			deltaAux[i] = [ (c,dicc[e]) for (c,e) in delta[self.estados[i]]]
 
 		self.estados=estados
 		self.delta=deltaAux
 
 	def	equivalente(self, adf1):
->>>>>>> 76adde6b2d161658faf131a5d9d0f669dbec4439
 		return
