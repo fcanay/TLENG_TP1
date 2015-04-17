@@ -253,20 +253,23 @@ class AFD:
 
 		#Crear el nuevo AFD
 		res = AFD()
-		res.estados = clasesEquiv.keys()
+		for est in clasesEquiv:
+			res.estados.append(clasesEquiv[est])
+		res.estados = list(set(res.estados)) #saco repe
+
 		res.alfabeto = self.alfabeto
 		res.estado_inicial = clasesEquiv[self.estado_inicial]
-		for f in res.estados_finales:
+		for f in self.estados_finales:
 			if clasesEquiv[f] not in res.estados_finales:
 				res.estados_finales.append(clasesEquiv[f])
 
-		for est in res.estados:
-			res.delta[est] = []
+		for est in self.estados:
+			res.delta[clasesEquiv[est]] = []
 			for (char, est2) in matrizDeResultados[est]:
-				res.delta[est].append((char, est2))
+				res.delta[clasesEquiv[est]].append((char, est2))
 
-		self = res
-		return
+		return res
+
 
 	def dameClasesEquiv(self):
 		congruenciaVieja = {}
