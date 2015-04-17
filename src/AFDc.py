@@ -95,14 +95,14 @@ class AFD:
 		self.estado_inicial = None;
 
 	def agregar_estado(self):
-		i = len(self.estados) +1
+		i = len(self.estados) + 1
 		self.estados.append(i);
 		self.delta[i] = [];
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and (not (char,estado2) in self.delta[estado1]):
-			self.delta[estado1] = self.delta[estado1].append((char,estado2)) 
+		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and ((char,estado2) not in self.delta[estado1]):
+			self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
 		self.acepta_desde(self.estado_inicial,cadena);
@@ -328,37 +328,41 @@ class AFD:
 		nuevaLinea.join(lineas)
 		return
 
+	#TODO, despues sacar el with open
 	def toDOT(self, file):
-		file.write("strict digraph {\n")
-		file.write("\trankdir=LR\n")
-		file.write("\tnode [shape = none, label \"\", width = 0, height = 0]; qd \n")
-		file.write("\tnode [label=\"\\N\", width = 0.5, width = 0.5];\n")
-		file.write("\tnode [shape = doublecircle];")
-		
-		for est in self.estados_finales:
-			file.write(" " + str(est))
-		file.write(";")
+		with open(file, 'w') as archivo:
+			archivo.write("strict digraph {\n")
+			archivo.write("\trankdir=LR;\n")
+			archivo.write("\tnode [shape = none, label = \"\", width = 0, height = 0]; qd;\n")
+			archivo.write("\tnode [label=\"\\N\", width = 0.5, width = 0.5];\n")
+			archivo.write("\tnode [shape = doublecircle];")
+			
+			for est in self.estados_finales:
+				archivo.write(" " + str(est))
+			archivo.write(";\n")
 
-		file.write("qd -> " + str(self.estado_inicial) + "\n")
+			archivo.write("\tnode [shape = circle];\n")
 
-		for est in self.estados:
-			letrasAImprimir = {}
-			for (letra, est2) in self.delta[est]:
-				if est2 in letrasAImprimir:
-					letrasAImprimir[est2].append(letra)
-				else:
-					letrasAImprimir[est2] = [letra]
+			archivo.write("\tqd -> " + str(self.estado_inicial) + "\n")
 
-			for est in letrasAImprimir:
-				file.write(str(est) + " -> " + str (est2) + "[label=\"")
-				for letra in letrasAImprimir[est]:
-					if letra == letrasAImprimir[0]:
-						file.write(letra)
+			for est in self.estados:
+				letrasAImprimir = {}
+				for (letra, est2) in self.delta[est]:
+					if est2 in letrasAImprimir:
+						letrasAImprimir[est2].append(letra)
 					else:
-						file.write(", " + letra)
-				file.write("\"]\n")
+						letrasAImprimir[est2] = [letra]
 
-		file.write("}")
+				for est2 in letrasAImprimir:
+					archivo.write("\t" + str(est) + " -> " + str (est2) + "[label=\"")
+					for letra in letrasAImprimir[est2]:
+						if letra == letrasAImprimir[est2][0]:
+							archivo.write(letra)
+						else:
+							archivo.write(", " + letra)
+					archivo.write("\"]\n")
+
+			archivo.write("}")
 		return
 
 	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
