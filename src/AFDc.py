@@ -239,10 +239,10 @@ class AFD:
 
 
 	def aUnPasoLamda(self,e):
-		print "self"
-		print self.delta
-		print "e"
-		print  e
+		# print "self"
+		# print self.delta
+		# print "e"
+		# print  e
 		return set([ x for (char,x) in self.delta[e], x!=e and char == nuestroLambda])
 	
 
@@ -253,14 +253,15 @@ class AFD:
 
 		#Crear el nuevo AFD
 		res = AFD()
-		res.estados = clasesDeEquiv.keys()
+		res.estados = clasesEquiv.keys()
 		res.alfabeto = self.alfabeto
 		res.estado_inicial = clasesEquiv[self.estado_inicial]
-		for f in estados_finales:
+		for f in res.estados_finales:
 			if clasesEquiv[f] not in res.estados_finales:
 				res.estados_finales.append(clasesEquiv[f])
 
 		for est in res.estados:
+			res.delta[est] = []
 			for (char, est2) in matrizDeResultados[est]:
 				res.delta[est].append((char, est2))
 
@@ -396,11 +397,14 @@ class AFD:
 		self.estados_finales = [estado for estado in self.estados, estado not in self.estados_finales]
 		
 	def completar(self):
-		i = self.agregar_estado()
+		estaCompleto = True
 		for e in self.estados:
 			charsAux = [char for (char,e1) in self.delta[e]]
 			for char in self.alfabeto:
 				if char not in charsAux:
+					if estaCompleto:
+						i = self.agregar_estado()
+						estaCompleto = False
 					self.agregar_transicion(e,char,i)
 
 	def nodosToInt(self):
