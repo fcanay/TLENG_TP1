@@ -1,11 +1,11 @@
 import sys
 import os
 
-nuestroLambda = " "
+nuestroLambda = ""
 
 #auxiliares
 def partition(s):
-	lines = s.split("\n")
+	lines = s
 	res = []
 	i = 1
 	while i < len(lines):
@@ -21,34 +21,47 @@ def fromRegex(regex_file):
 	return  createFromRegex(lines)
 
 def createFromRegex(s):
-	if s[0] != '{':
-		if s[0] == '\\' and len(s) > 1 and s[1] == 't':
+	print "s"
+	print s
+	if s[0][0] != '{':
+		if s[0][0] == '\\' and len(s) > 1 and s[0][1] == 't':
+			print "TAB"
 			return letra('\t')
-		return letra(s[0])
+		print "LETRA: " + s[0][0]
+		return letra(s[0][0])
 	parts = partition(s)
+	print parts
+	print "code"
 	afd = createFromRegex(parts[0])
-	if s[0:7] == "{CONCAT}":
-		for x in xrange(1,s[8]-1):
+	if s[0][0:8] == "{CONCAT}":
+		print "{CONCAT}"
+		for x in xrange(1,int(s[0][8])):
 			afd.concat(createFromRegex(parts[x]))
 
-	elif s[0:5] == "{STAR}":
+	elif s[0][0:6] == "{STAR}":
+		print "{STAR}"
 		afd.star()
-	elif s[0:5] == "{PLUS}":
+	elif s[0][0:6] == "{PLUS}":
+		print "{PLUS}"
 		afd.plus()
-	elif s[0:4] == "{OPT}":
+	elif s[0][0:5] == "{OPT}":
+		print "{OPT}"
 		afd.opt()
-	elif s[0:3] == "{OR}":
-		for x in xrange(1,s[4]-1):
+	elif s[0][0:4] == "{OR}":
+		print "{OR}"
+		print s[0][5]
+		for x in xrange(1,int(s[0][4])):
 			afd.orAFD(createFromRegex(parts[x]))
 	return afd
 
 #casos base
 def letra(caracter):
 	res = AFD()
-	res.estados = [1, 2]
+	res.agregar_estado()
+	res.agregar_estado()
+	res.alfabeto = [caracter];
 	res.agregar_transicion(1, caracter, 2)
 	res.estados_finales = [2];
-	res.alfabeto = [caracter];
 	res.estado_inicial = 1;
 	return res
 
@@ -101,7 +114,7 @@ class AFD:
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and (char in self.alfabeto) and ((char,estado2) not in self.delta[estado1]):
+		if (estado1 in self.estados) and (estado2 in self.estados) and ((char in self.alfabeto) or char==nuestroLambda) and ((char,estado2) not in self.delta[estado1]):
 			self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
@@ -135,7 +148,7 @@ class AFD:
 	def reorganizarEstados(self, i):
 		deltaAux = {}
 		for est in self.estados:
-			deltaAux[est] = [e + i for e in self.delta[e]]
+			deltaAux[est+i] = [(char,e + i) for (char,e) in self.delta[est]]
 		self.delta = deltaAux
 		self.estados = [est + i for est in self.estados]
 		self.estado_inicial += i
@@ -168,19 +181,35 @@ class AFD:
 		return self.orAFD(lambdaAFD())
 
 	def orAFD(self, otroAFD):
+		print "self"
+		print self.delta
+		print self.estados
+		print self.estados_finales
+		print "other"
+		print otroAFD.delta
+		print otroAFD.estados
+		print otroAFD.estados_finales
+
 		#Reorganizo estados y delta
+		
+		otroAFD.reorganizarEstados(len(self.estados))
+		print "other"
+		print otroAFD.delta
+		print otroAFD.estados
+		print otroAFD.estados_finales
+		for x in xrange(0,len(otroAFD.estados)):
+			self.agregar_estado()
 		estadoInicial = self.agregar_estado()
 		estadoFinal = self.agregar_estado()
-		otroAFD.reorganizarEstados(len(self.estados))
-		for x in xrange(1,len(otroAFD.estados)):
-			self.agregar_estado()
 		#Actualizo estados finales
 		for final in self.estados_finales:
 			self.agregar_transicion(final, nuestroLambda, estadoFinal)
 		for final in otroAFD.estados_finales:
 			self.agregar_transicion(final, nuestroLambda, estadoFinal)
+		for est in otroAFD.estados:
+			self.delta[est] = self.delta[est] + otroAFD.delta[est]
 
-		self.estados_finales = estadoFinal
+		self.estados_finales = [estadoFinal]
 
 		#Actualizo estados inciales
 		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
@@ -189,7 +218,12 @@ class AFD:
 		self.estado_inicial = estadoInicial
 
 		#Nuevo Alfabeto     
-		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
+		print "return OR"
+		print self.estados
+		print self.delta
+		print self.estado_inicial
+		print self.estados_finales
 		return
 
 	#Asumimos AFND y no AFND-lambda

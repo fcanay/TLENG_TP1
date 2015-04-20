@@ -6,6 +6,6 @@ def afd_minimo(archivo_regex, archivo_automata):
     afd = fromRegex(archivo_regex);
     print afd.estados
     print afd.delta
-    afd.determinizar();
-    afd.minimizar();
-    afd.toFile(archivo_automata);
+    #afd.determinizar();
+    #afd.minimizar();
+    #afd.toFile(archivo_automata);
