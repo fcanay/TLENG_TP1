@@ -61,18 +61,26 @@ def lambdaAFD():
 
 #TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def fromFile(file):
-	afd = AFD();
-	auxEstados = file.next().split();
+	afd = AFD()
+	matching = {}
+
+	auxEstados = file.next().split()
 	for est in auxEstados:
-		afd.agregar_estado();
-	afd.alfabeto = file.next().split();
-	afd.estado_inicial = file.next();
-	afd.estados_finales = file.next().split();
+		matching[est] = afd.agregar_estado()
+
+	afd.alfabeto = file.next().split()
+
+	afd.estado_inicial = file.next().split()[0]
+
+	auxEstados = file.next().split()
+	for est in auxEstados:
+		afd.estados_finales.append(int(est));
 
 	for line in file:
 		pieces = line.split()
-		afd.agregar_transicion(pieces[0],pieces[1],pieces[2])
-	return afd;
+		afd.agregar_transicion(matching[pieces[0]], pieces[1], matching[pieces[2]])
+
+	return afd
 		
 def partes(lista):
 	return
@@ -105,17 +113,21 @@ class AFD:
 			self.delta[estado1].append((char,estado2)) 
 
 	def acepta(self,cadena):
-		self.acepta_desde(self.estado_inicial,cadena);
+		return self.acepta_desde(self.estado_inicial,cadena)
 
-	def acepta_desde(self,estado,cadena):
+	def acepta_desde(self, estado, cadena):
+		estado = int(estado)
 		if len(cadena) == 0:
 			return estado in self.estados_finales
-		aux = [ est for (char,est) in self.delta[estado], char == cadena[0]];
-		if aux.len != 0:
-			return self.acepta_desde(aux[0],cadena.pop([0]));
-		else:
-			return False;
 
+		aux = [ est for (letra, est) in self.delta[estado] if letra == cadena[0]];
+
+		valeCadena = False
+		cadenaSiguiente = cadena[1:len(cadena)]
+		for est in aux:
+			valeCadena = valeCadena or self.acepta_desde(est, cadenaSiguiente)
+
+		return valeCadena
 
 	#casos recursivos
 	def concat(self, otroAFD):
