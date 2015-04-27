@@ -83,7 +83,7 @@ def fromFile(file):
 
 	afd.alfabeto = file.next().split()
 
-	afd.estado_inicial = file.next().split()[0]
+	afd.estado_inicial = int(file.next().split()[0])
 
 	auxEstados = file.next().split()
 	for est in auxEstados:
@@ -131,8 +131,31 @@ class AFD:
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
-		if (estado1 in self.estados) and (estado2 in self.estados) and ((char in self.alfabeto) or char==nuestroLambda) and ((char,estado2) not in self.delta[estado1]):
-			self.delta[estado1].append((char,estado2)) 
+		enEstados1 = estado1 in self.estados
+		enEstados2 = estado2 in self.estados
+		enAlfabetoOLambda = (char in self.alfabeto) or (char == nuestroLambda)
+		queNoEste = ((char,estado2) not in self.delta[estado1])
+
+		if not enEstados1:
+			print "no estaba1"
+			return
+
+		if not enEstados2:
+			print "no estaba2"
+			return
+
+		if not enAlfabetoOLambda:
+			print "no alfabeto"
+			return
+
+		if not queNoEste:
+			print "ya estaba final"
+			return
+
+		# if enEstados1 and enEstados2 and enAlfabetoOLambda and queNoEste:
+		# print "Agregando!"
+		self.delta[estado1].append((char,estado2)) 
+
 
 	def acepta(self,cadena):
 		return self.acepta_desde(self.estado_inicial,cadena)
@@ -377,7 +400,11 @@ class AFD:
 			for (char, est2) in matrizDeResultados[est]:
 				res.delta[clasesEquiv[est]].append((char, est2))
 
-		return res
+		self.estados = res.estados
+		self.estados_finales = res.estados_finales
+		self.estado_inicial = res.estado_inicial
+		self.alfabeto = res.alfabeto
+		self.delta = res.delta
 
 
 	def dameClasesEquiv(self):
@@ -425,35 +452,33 @@ class AFD:
 				return estado
 
 	def toFile(self, file):
-		with open(file, 'w') as archivo:
-			lineas = []
-			tab = "\t"
+		lineas = []
+		tab = "\t"
 
-			lineasAux = []
-			for est in self.estados:
-				lineasAux.append(str(est))
-			lineas.append( tab.join(lineasAux) )
+		lineasAux = []
+		for est in self.estados:
+			lineasAux.append(str(est))
+		lineas.append( tab.join(lineasAux) )
 
-			lineasAux = []
-			for est in self.alfabeto:
-				lineasAux.append(str(est))
-			lineas.append( tab.join(lineasAux) )
+		lineasAux = []
+		for est in self.alfabeto:
+			lineasAux.append(str(est))
+		lineas.append( tab.join(lineasAux) )
 
-			lineas.append( str(self.estado_inicial) )
+		lineas.append( str(self.estado_inicial) )
 
-			lineasAux = []
-			for est in self.estados_finales:
-				lineasAux.append(str(est))
-			lineas.append( tab.join(lineasAux) )
+		lineasAux = []
+		for est in self.estados_finales:
+			lineasAux.append(str(est))
+		lineas.append( tab.join(lineasAux) )
 
-			for transicion in self.delta:
-				for (simbolo,estado) in self.delta[transicion]:
-					lineas.append(tab.join([str(transicion), str(simbolo), str(estado)]))
+		for transicion in self.delta:
+			for (simbolo,estado) in self.delta[transicion]:
+				lineas.append(tab.join([str(transicion), str(simbolo), str(estado)]))
 
-			for linea in lineas:
-				archivo.write(linea)
-				archivo.write("\n")
-		return
+		for linea in lineas:
+			file.write(linea)
+			file.write("\n")
 
 	def toDOT(self, file):
 		file.write("strict digraph {\n")
@@ -481,6 +506,14 @@ class AFD:
 			for est2 in letrasAImprimir:
 				file.write("\t" + str(est) + " -> " + str (est2) + "[label=\"")
 				for letra in letrasAImprimir[est2]:
+					# Casos letras especiales
+					if letra == "\t":
+						letra = "\\t"
+					if letra == nuestroLambda:
+						letra = "lambda"
+					if letra == " ":
+						letra = "espacio"
+
 					if letra == letrasAImprimir[est2][0]:
 						file.write(letra)
 					else:
@@ -491,29 +524,36 @@ class AFD:
 		
 	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
 	#Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
-	def interseccion(self, adf1):
+	def interseccion(self, afd1):
+
 		res = AFD()
+		res.alfabeto = list(set(self.alfabeto).intersection(set(afd1.alfabeto)))
 		#Estados y delta
 		for nodo1 in self.estados:
 			for nodo2 in afd1.estados:
-				res.agregar_estado((nodo1,nodo2))
-
+				res.estados.append((nodo1,nodo2))
+				
 				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
 					res.estados_finales.append((nodo1,nodo2))
 
 				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
 					res.estado_inicial = (nodo1,nodo2)
 
+		for nodo1 in self.estados:
+			for nodo2 in afd1.estados:
+				res.delta[(nodo1, nodo2)] = []
 				for (char1, estado1) in self.delta[nodo1]:
 					for (char2, estado2) in afd1.delta[nodo2]:
 						if(char1 == char2):
 							res.agregar_transicion((nodo1,nodo2), char1, (estado1,estado2))
 
 		res.nodosToInt()
-		self.alfabeto = list(set(self.alfabeto).interseccion(set(afd1.alfabeto)))
 
-		self = res
-		return
+		self.alfabeto = res.alfabeto
+		self.estados = res.estados
+		self.estados_finales = res.estados_finales
+		self.estado_inicial = res.estado_inicial
+		self.delta = res.delta
 
 	def complemento(self):
 		self.completar()
@@ -532,8 +572,7 @@ class AFD:
 
 	def nodosToInt(self):
 		dicc = {}
-		print len(self.estados)
-		estados = range(1,len(self.estados)+1)
+		estados = range(1, len(self.estados) + 1)
 		deltaAux = {}
 		for i in estados:
 			dicc[self.estados[i-1]] = i
