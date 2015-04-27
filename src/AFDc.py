@@ -498,17 +498,25 @@ class AFD:
 			for est2 in letrasAImprimir:
 				file.write("\t" + str(est) + " -> " + str (est2) + "[label=\"")
 				for letra in letrasAImprimir[est2]:
-					# Casos letras especiales
-					if letra == "\t":
-						letra = "\\t"
-					if letra == nuestroLambda:
-						letra = "lambda"
-					if letra == " ":
-						letra = "espacio"
-
 					if letra == letrasAImprimir[est2][0]:
+						# Casos letras especiales
+						if letra == "\t":
+							letra = "\\t"
+						if letra == nuestroLambda:
+							letra = "lambda"
+						if letra == " ":
+							letra = "espacio"
+							
 						file.write(letra)
 					else:
+						# Casos letras especiales
+						if letra == "\t":
+							letra = "\\t"
+						if letra == nuestroLambda:
+							letra = "lambda"
+						if letra == " ":
+							letra = "espacio"
+
 						file.write(", " + letra)
 				file.write("\"]\n")
 
