@@ -549,7 +549,7 @@ class AFD:
 
 	def complemento(self):
 		self.completar()
-		self.estados_finales = [estado for estado in self.estados, estado not in self.estados_finales]
+		self.estados_finales = [estado for estado in self.estados if estado not in self.estados_finales]
 		
 	def completar(self):
 		estaCompleto = True

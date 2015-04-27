@@ -3,8 +3,8 @@
 import AFDc
 
 def interseccion(archivo_automata1, archivo_automata2, archivo_automata):
-    afd1 = fromFile(archivo_automata1)
-    afd2 = fromFile(archivo_automata2)
-    afd3 = afd1.interseccion(afd2)
-    afd3.minimizar()
-    afd3.toFile(archivo_automata)
+    afd1 = AFDc.fromFile(archivo_automata1)
+    afd2 = AFDc.fromFile(archivo_automata2)
+    afd1.interseccion(afd2)
+    afd1.minimizar()
+    afd1.toFile(archivo_automata)
