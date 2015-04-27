@@ -270,7 +270,7 @@ class AFD:
 		res = AFD()
 		res.alfabeto = self.alfabeto
 		res.estado_inicial = self.ClausuraLamda(self.estado_inicial)
-		porRecorrer = [[self.estado_inicial]] #TODO cambiar por res.estado_inicial
+		porRecorrer = [list(res.estado_inicial)] #TODO cambiar por res.estado_inicial
 		res.estado_inicial = ",".join(str(x) for x in res.estado_inicial)
 		print "porRecorrer"
 		while len( porRecorrer ) > 0:
