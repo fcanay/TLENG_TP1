@@ -59,15 +59,15 @@ def letra(caracter):
 	res = AFD()
 	res.agregar_estado()
 	res.agregar_estado()
-	res.alfabeto = [caracter];
+	res.alfabeto = [caracter]
 	res.agregar_transicion(1, caracter, 2)
-	res.estados_finales = [2];
-	res.estado_inicial = 1;
+	res.estados_finales = [2]
+	res.estado_inicial = 1
 	return res
 
 def lambdaAFD():
 	res = AFD()
-	res.estados = [1]
+	res.agregar_estado
 	res.estados_finales = [1]
 	res.estado_inicial = 1
 	return res
@@ -87,7 +87,7 @@ def fromFile(file):
 
 	auxEstados = file.next().split()
 	for est in auxEstados:
-		afd.estados_finales.append(int(est));
+		afd.estados_finales.append(int(est))
 
 	for line in file:
 		pieces = line.split()
@@ -103,22 +103,31 @@ class AFD:
 		# lista de estados del AFD
 		#estados
 		#Funcion de transicion de estados -> (char,estado)
-		#delta;
-		#estados_finales;
-		#alfabeto;
-		#estado_inicial;
+		#delta
+		#estados_finales
+		#alfabeto
+		#estado_inicial
 
 	def __init__(self):
-		self.estados = [];
-		self.delta = {};
-		self.estados_finales = [];
-		self.alfabeto = [];
-		self.estado_inicial = None;
+		self.estados = []
+		self.delta = {}
+		self.estados_finales = []
+		self.alfabeto = []
+		self.estado_inicial = None
+
+	def copy(self):
+		res = AFD()
+		res.estados = self.estados
+		res.delta = self.delta
+		res.estados_finales = self.estados_finales
+		res.alfabeto = self.alfabeto
+		res.estado_inicial = self.estado_inicial
+		return res
 
 	def agregar_estado(self):
 		i = len(self.estados) + 1
-		self.estados.append(i);
-		self.delta[i] = [];
+		self.estados.append(i)
+		self.delta[i] = []
 		return i
 
 	def agregar_transicion(self,estado1,char,estado2):
@@ -133,7 +142,7 @@ class AFD:
 		if len(cadena) == 0:
 			return estado in self.estados_finales
 
-		aux = [ est for (letra, est) in self.delta[estado] if letra == cadena[0]];
+		aux = [ est for (letra, est) in self.delta[estado] if letra == cadena[0]]
 
 		valeCadena = False
 		cadenaSiguiente = cadena[1:len(cadena)]
@@ -144,9 +153,26 @@ class AFD:
 
 	#casos recursivos
 	def concat(self, otroAFD):
+		print "self concat"
+		print self.delta
+		print self.estados
+		print self.estados_finales
+		print self.alfabeto
+
+		print "other"
+		print otroAFD.delta
+		print otroAFD.estados
+		print otroAFD.estados_finales
+		print otroAFD.alfabeto
+
 		#Reorganizo estados y delta
 		otroAFD.reorganizarEstados(len(self.estados))
 
+		for x in xrange(0,len(self.estados)):
+			self.agregar_estado()
+
+		for e in otroAFD.estados:
+			self.delta[e] = otroAFD.delta[e]
 		# lambda es ' '. Checkear que onda con "acepta"
 		#Actualizo estados finales
 		for final in self.estados_finales:
@@ -155,7 +181,14 @@ class AFD:
 		self.estados_finales = otroAFD.estados_finales
 		
 		#Nuevo Alfabeto
-		self.alfabeto = list(set(self.alfabeto ++ otroAFD.alfabeto))
+		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
+
+		print "self concat"
+		print self.delta
+		print self.estados
+		print self.estados_finales
+		print self.alfabeto
+		
 
 	def reorganizarEstados(self, i):
 		deltaAux = {}
@@ -167,6 +200,10 @@ class AFD:
 		self.estados_finales = [est + i for est in self.estados_finales]
 
 	def star(self):
+		# print "self star"
+		# print self.delta
+		# print self.estados
+		# print self.estados_finales
 		#Reorganizo estados y delta
 		estadoInicial = self.agregar_estado() 
 		estadoFinal = self.agregar_estado()
@@ -178,37 +215,50 @@ class AFD:
 
 		self.estados_finales = [estadoFinal]
 
+		# print "self STAR "
+		# print self.delta
+		# print self.estados
+		# print self.estados_finales
+
 		#Actualizo estados inciales
 		self.agregar_transicion(estadoInicial, nuestroLambda, self.estado_inicial)
-		self.agregar_transicion(estadoInicial, nuestroLambda, self.estadoFinal)
+		self.agregar_transicion(estadoInicial, nuestroLambda, estadoFinal)
 
 		self.estado_inicial = estadoInicial
+
+		# print "self STAR "
+		# print self.delta
+		# print self.estados
+		# print self.estados_finales
+		# print self.alfabeto
 
 		return
 
 	def plus(self):
-		return self.concat(self.star())
+		aux = self.copy()
+		aux.star()
+		return self.concat(aux)
 
 	def opt(self):
 		return self.orAFD(lambdaAFD())
 
 	def orAFD(self, otroAFD):
-		print "self"
-		print self.delta
-		print self.estados
-		print self.estados_finales
-		print "other"
-		print otroAFD.delta
-		print otroAFD.estados
-		print otroAFD.estados_finales
+		# print "self"
+		# print self.delta
+		# print self.estados
+		# print self.estados_finales
+		# print "other"
+		# print otroAFD.delta
+		# print otroAFD.estados
+		# print otroAFD.estados_finales
 
 		#Reorganizo estados y delta
 		
 		otroAFD.reorganizarEstados(len(self.estados))
-		print "other"
-		print otroAFD.delta
-		print otroAFD.estados
-		print otroAFD.estados_finales
+		# print "other"
+		# print otroAFD.delta
+		# print otroAFD.estados
+		# print otroAFD.estados_finales
 		for x in xrange(0,len(otroAFD.estados)):
 			self.agregar_estado()
 		estadoInicial = self.agregar_estado()
@@ -231,11 +281,11 @@ class AFD:
 
 		#Nuevo Alfabeto     
 		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
-		print "return OR"
-		print self.estados
-		print self.delta
-		print self.estado_inicial
-		print self.estados_finales
+		# print "return OR"
+		# print self.estados
+		# print self.delta
+		# print self.estado_inicial
+		# print self.estados_finales
 		return
 
 	#Asumimos AFND y no AFND-lambda
@@ -243,36 +293,49 @@ class AFD:
 		res = AFD()
 		res.alfabeto = self.alfabeto
 		res.estado_inicial = set(self.ClausuraLamda(self.estado_inicial))
-		porRecorrer = set([res.estado_inicial])
-
+		porRecorrer = [[self.estado_inicial]]
+		print "porRecorrer"
+		print porRecorrer
 		while len( porRecorrer ) > 0:
 			#El nodo es un conjunto de estados de self
 			nodo = porRecorrer.pop()
-			res.estados.append(nodo)
-			res.delta[nodo] = []
+			res.estados.append(",".join(str(x) for x in nodo))
+			res.delta[(",".join(str(x) for x in nodo))] = []
 
 			for a in self.alfabeto:
-				aux = self.Mover(nodo, a)
-				res.delta[nodo].append((a, aux))
-				if aux not in res.estados:
-					porRecorrer.add(aux)
+				aux = list(self.Mover(set(nodo), a))
+				res.delta[(",".join(str(x) for x in nodo))].append((a, ",".join(str(x) for x in aux)))
+				if (",".join(str(x) for x in list(aux))) not in res.estados:
+					porRecorrer.append(aux)
 					
 		for e in res.estados:
 			for f in self.estados_finales:
-				if f in e:
+				if str(f) in e:
 					res.estados_finales.append(e)
 					break
 
+		print "hola"
+		print res.estados
+		print res.delta
+		print res.estado_inicial
+		print res.estados_finales
+		print res.alfabeto
+
 		res.nodosToInt()
-		self = res
+		self.estados = res.estados
+		self.estados_finales = res.estados_finales
+		self.estado_inicial= res.estado_inicial
+		self.alfabeto = res.alfabeto
+		self.delta = res.delta
 
 	def Mover(self,ests,char):
 		aux = set()
 		for est in ests:
-			aux.union([e for (c,e) in self.delta[est], c == char])
+			aux.union([e for (c,e) in self.delta[est] if c == char])
 		res = set()
 		for e in aux:
 			res.union(self.ClausuraLamda(e))
+		return res
 
 	def ClausuraLamda(self,e):
 		res = set([e])
@@ -289,7 +352,7 @@ class AFD:
 		# print self.delta
 		# print "e"
 		# print  e
-		return set([ x for (char,x) in self.delta[e], x!=e and char == nuestroLambda])
+		return set([ x for (char,x) in self.delta[e] if x!=e and char == nuestroLambda])
 	
 
 	#Minimizar se llama siempre que el AF sea deterministico
@@ -469,12 +532,13 @@ class AFD:
 
 	def nodosToInt(self):
 		dicc = {}
-		estados = [1..len(self.estados)]
+		print len(self.estados)
+		estados = range(1,len(self.estados)+1)
 		deltaAux = {}
 		for i in estados:
-			dicc[self.estados[i]] = i
+			dicc[self.estados[i-1]] = i
 		for i in estados:
-			deltaAux[i] = [ (c,dicc[e]) for (c,e) in delta[self.estados[i]]]
+			deltaAux[i] = [ (c,dicc[e]) for (c,e) in self.delta[self.estados[i-1]]]
 
 		self.estados = estados
 		self.delta = deltaAux

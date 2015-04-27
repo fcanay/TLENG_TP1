@@ -4,7 +4,7 @@
 			a
 			b
 			c
-	{PLUS}
+	{STAR}
 		{CONCAT}2
 			d
 			e
