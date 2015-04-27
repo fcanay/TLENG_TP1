@@ -21,35 +21,23 @@ def fromRegex(regex_file):
 	return  createFromRegex(lines)
 
 def createFromRegex(s):
-	print "s"
-	print s
 	if s[0][0] != '{':
 		if s[0][0] == '\\' and len(s) > 1 and s[0][1] == 't':
-			print "TAB"
 			return letra('\t')
-		print "LETRA: " + s[0][0]
 		return letra(s[0][0])
 	parts = partition(s)
-	print parts
-	print "code"
 	afd = createFromRegex(parts[0])
 	if s[0][0:8] == "{CONCAT}":
-		print "{CONCAT}"
 		for x in xrange(1,int(s[0][8])):
 			afd.concat(createFromRegex(parts[x]))
 
 	elif s[0][0:6] == "{STAR}":
-		print "{STAR}"
 		afd.star()
 	elif s[0][0:6] == "{PLUS}":
-		print "{PLUS}"
 		afd.plus()
 	elif s[0][0:5] == "{OPT}":
-		print "{OPT}"
 		afd.opt()
 	elif s[0][0:4] == "{OR}":
-		print "{OR}"
-		print s[0][5]
 		for x in xrange(1,int(s[0][4])):
 			afd.orAFD(createFromRegex(parts[x]))
 	return afd
@@ -153,18 +141,6 @@ class AFD:
 
 	#casos recursivos
 	def concat(self, otroAFD):
-		print "self concat"
-		print self.delta
-		print self.estados
-		print self.estados_finales
-		print self.alfabeto
-
-		print "other"
-		print otroAFD.delta
-		print otroAFD.estados
-		print otroAFD.estados_finales
-		print otroAFD.alfabeto
-
 		#Reorganizo estados y delta
 		otroAFD.reorganizarEstados(len(self.estados))
 
@@ -183,12 +159,6 @@ class AFD:
 		#Nuevo Alfabeto
 		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
 
-		print "self concat"
-		print self.delta
-		print self.estados
-		print self.estados_finales
-		print self.alfabeto
-		
 
 	def reorganizarEstados(self, i):
 		deltaAux = {}
@@ -290,23 +260,34 @@ class AFD:
 
 	#Asumimos AFND y no AFND-lambda
 	def determinizar(self):
+
+		print "self determinizar"
+		print self.estados
+		print self.delta
+		print self.estado_inicial
+		print self.estados_finales
+
 		res = AFD()
 		res.alfabeto = self.alfabeto
-		res.estado_inicial = set(self.ClausuraLamda(self.estado_inicial))
-		porRecorrer = [[self.estado_inicial]]
+		res.estado_inicial = self.ClausuraLamda(self.estado_inicial)
+		porRecorrer = [[self.estado_inicial]] #TODO cambiar por res.estado_inicial
+		res.estado_inicial = ",".join(str(x) for x in res.estado_inicial)
 		print "porRecorrer"
-		print porRecorrer
 		while len( porRecorrer ) > 0:
+			print porRecorrer
 			#El nodo es un conjunto de estados de self
 			nodo = porRecorrer.pop()
 			res.estados.append(",".join(str(x) for x in nodo))
 			res.delta[(",".join(str(x) for x in nodo))] = []
 
 			for a in self.alfabeto:
-				aux = list(self.Mover(set(nodo), a))
-				res.delta[(",".join(str(x) for x in nodo))].append((a, ",".join(str(x) for x in aux)))
-				if (",".join(str(x) for x in list(aux))) not in res.estados:
-					porRecorrer.append(aux)
+				aux = self.Mover(nodo, a)
+				if aux != []:
+					res.delta[(",".join(str(x) for x in nodo))].append((a, ",".join(str(x) for x in aux)))
+					if (",".join(str(x) for x in list(aux))) not in res.estados:
+						porRecorrer.append(aux)
+						print "Agrego a por Recorrer"
+						print porRecorrer
 					
 		for e in res.estados:
 			for f in self.estados_finales:
@@ -329,21 +310,32 @@ class AFD:
 		self.delta = res.delta
 
 	def Mover(self,ests,char):
+		print "Mover"
+		print ests
+		print char
 		aux = set()
 		for est in ests:
-			aux.union([e for (c,e) in self.delta[est] if c == char])
+			aux = aux.union(set([e for (c,e) in self.delta[est] if c == char]))
+		#print "AUX"
+		#print aux
+		#print "CHAU"
 		res = set()
+		print "ClausuraLamda"
+		#print self.ClausuraLamda()
 		for e in aux:
-			res.union(self.ClausuraLamda(e))
-		return res
+			res = res.union(self.ClausuraLamda(e))
+		print res
+		return list(res)
 
 	def ClausuraLamda(self,e):
+		print e
 		res = set([e])
 		porRecorrer = set([e])  
 		while len(porRecorrer) > 0:
-			aux = res.intersection(self.aUnPasoLamda(porRecorrer.pop()))
-			res.union(aux)
-			porRecorrer.union(aux)
+			aux = self.aUnPasoLamda(porRecorrer.pop()).difference(res)
+			res = res.union(aux)
+			porRecorrer = porRecorrer.union(aux)
+		print res
 		return res
 
 
@@ -532,7 +524,6 @@ class AFD:
 
 	def nodosToInt(self):
 		dicc = {}
-		print len(self.estados)
 		estados = range(1,len(self.estados)+1)
 		deltaAux = {}
 		for i in estados:
@@ -542,6 +533,8 @@ class AFD:
 
 		self.estados = estados
 		self.delta = deltaAux
+		self.estado_inicial = dicc[self.estado_inicial]
+		self.estados_finales = [dicc[e] for e in self.estados_finales]
 
 	def	equivalente(self, adf1):
 		self.interseccion(afd1.complemento())
