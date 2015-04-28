@@ -28,11 +28,16 @@ Para imlementar el algoritmo que determina equivalencia entre \emph{AFDs} calcul
 
 \subsection{Problemas encontrados}
 
+Cuando comenzamos a implementar el trabajo práctico nos enfrentamos al problema de cómo representar a los nodos. Esto podía llegar a ser un problema ya que no podemos repetir el nombre de los nodos.
+
+Originalmente los habíamos nombrado \emph{$q_i$} con $i$ natural. Además manteníamos un invariante de nombrar los nodos $q_1$, $q_2$, $\hdots$, $q_n$, con n = longitud(estados). Esto resultó ser demasiada molestia ya que la $q$ formaba parte del nombre.
+
+Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nombrar los nodos $1$, $2$, $\hdots$, $n$, con n = longitud(estados). De esta forma, para agregar un nuevo nodo a nuestro AFD simplemente agregamos $longitud(estados) + 1$ a la lista de estados del AFD.
+
+
 Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
 
 Cabe aclarar que, por ejemplo para imprimir $\backslash$ vía DOT tenemos que imprimir $\backslash\backslash$. Para esto, tenemos que escapar ambas $\backslash$, por lo que en nuestro archivo .py se lee $\backslash\backslash\backslash\backslash$
-
-Cuando comenzamos a 
 
 
 

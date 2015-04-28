@@ -45,15 +45,15 @@ def createFromRegex(s):
 #casos base
 def letra(caracter):
 	res = AFD()
-	print "HOLALALALALALLAALALAL"
-	print caracter
+	# print "HOLALALALALALLAALALAL"
+	# print caracter
 	res.agregar_estado()
 	res.agregar_estado()
 	res.alfabeto = [caracter]
 	res.agregar_transicion(1, caracter, 2)
 	res.estados_finales = [2]
 	res.estado_inicial = 1
-	print res.alfabeto
+	# print res.alfabeto
 	return res
 
 def lambdaAFD():
@@ -125,25 +125,25 @@ class AFD:
 		enEstados1 = estado1 in self.estados
 		enEstados2 = estado2 in self.estados
 		enAlfabetoOLambda = (char in self.alfabeto) or (char == nuestroLambda)
-		queNoEste = ((char,estado2) not in self.delta[estado1])
+		queNoEste = (char,estado2) not in self.delta[estado1]
 
-		if not enEstados1:
-			print "no estaba1"
-			return
+		# if not enEstados1:
+		# 	print "no estaba1"
+		# 	return
 
-		if not enEstados2:
-			print "no estaba2"
-			return
+		# if not enEstados2:
+		# 	print "no estaba2"
+		# 	return
 
-		if not enAlfabetoOLambda:
-			print "no alfabeto"
-			return
+		# if not enAlfabetoOLambda:
+		# 	print "no alfabeto"
+		# 	return
 
-		if not queNoEste:
-			print "ya estaba final"
-			return
+		# if not queNoEste:
+		# 	print "ya estaba final"
+		# 	return
 
-		# if enEstados1 and enEstados2 and enAlfabetoOLambda and queNoEste:
+		if enEstados1 and enEstados2 and enAlfabetoOLambda and queNoEste:
 		# print "Agregando!"
 		self.delta[estado1].append((char,estado2)) 
 
