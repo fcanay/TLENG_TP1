@@ -144,8 +144,8 @@ class AFD:
 		# 	return
 
 		if enEstados1 and enEstados2 and enAlfabetoOLambda and queNoEste:
-		# print "Agregando!"
-		self.delta[estado1].append((char,estado2)) 
+			# print "Agregando!"
+			self.delta[estado1].append((char,estado2)) 
 
 
 	def acepta(self,cadena):
