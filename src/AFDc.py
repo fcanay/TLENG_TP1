@@ -295,7 +295,7 @@ class AFD:
 
 		res = AFD()
 		res.alfabeto = self.alfabeto
-		res.estado_inicial = self.ClausuraLamda(self.estado_inicial)
+		res.estado_inicial = self.ClausuraLambda(self.estado_inicial)
 		porRecorrer = [list(res.estado_inicial)] #TODO cambiar por res.estado_inicial
 		res.estado_inicial = ",".join(str(x) for x in res.estado_inicial)
 		# print "porRecorrer"
@@ -346,14 +346,14 @@ class AFD:
 		#print aux
 		#print "CHAU"
 		res = set()
-		# print "ClausuraLamda"
-		#print self.ClausuraLamda()
+		# print "ClausuraLambda"
+		#print self.ClausuraLambda()
 		for e in aux:
-			res = res.union(self.ClausuraLamda(e))
+			res = res.union(self.ClausuraLambda(e))
 		# print res
 		return list(res)
 
-	def ClausuraLamda(self,e):
+	def ClausuraLambda(self,e):
 		# print e
 		res = set([e])
 		porRecorrer = set([e])  
