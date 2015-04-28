@@ -45,12 +45,15 @@ def createFromRegex(s):
 #casos base
 def letra(caracter):
 	res = AFD()
+	print "HOLALALALALALLAALALAL"
+	print caracter
 	res.agregar_estado()
 	res.agregar_estado()
 	res.alfabeto = [caracter]
 	res.agregar_transicion(1, caracter, 2)
 	res.estados_finales = [2]
 	res.estado_inicial = 1
+	print res.alfabeto
 	return res
 
 def lambdaAFD():
@@ -284,20 +287,20 @@ class AFD:
 	#Asumimos AFND y no AFND-lambda
 	def determinizar(self):
 
-		print "self determinizar"
-		print self.estados
-		print self.delta
-		print self.estado_inicial
-		print self.estados_finales
+		# print "self determinizar"
+		# print self.estados
+		# print self.delta
+		# print self.estado_inicial
+		# print self.estados_finales
 
 		res = AFD()
 		res.alfabeto = self.alfabeto
 		res.estado_inicial = self.ClausuraLamda(self.estado_inicial)
 		porRecorrer = [list(res.estado_inicial)] #TODO cambiar por res.estado_inicial
 		res.estado_inicial = ",".join(str(x) for x in res.estado_inicial)
-		print "porRecorrer"
+		# print "porRecorrer"
 		while len( porRecorrer ) > 0:
-			print porRecorrer
+			# print porRecorrer
 			#El nodo es un conjunto de estados de self
 			nodo = porRecorrer.pop()
 			res.estados.append(",".join(str(x) for x in nodo))
@@ -309,8 +312,8 @@ class AFD:
 					res.delta[(",".join(str(x) for x in nodo))].append((a, ",".join(str(x) for x in aux)))
 					if (",".join(str(x) for x in list(aux))) not in res.estados:
 						porRecorrer.append(aux)
-						print "Agrego a por Recorrer"
-						print porRecorrer
+						# print "Agrego a por Recorrer"
+						# print porRecorrer
 					
 		for e in res.estados:
 			for f in self.estados_finales:
@@ -318,12 +321,12 @@ class AFD:
 					res.estados_finales.append(e)
 					break
 
-		print "hola"
-		print res.estados
-		print res.delta
-		print res.estado_inicial
-		print res.estados_finales
-		print res.alfabeto
+		# print "hola"
+		# print res.estados
+		# print res.delta
+		# print res.estado_inicial
+		# print res.estados_finales
+		# print res.alfabeto
 
 		res.nodosToInt()
 		self.estados = res.estados
@@ -333,9 +336,9 @@ class AFD:
 		self.delta = res.delta
 
 	def Mover(self,ests,char):
-		print "Mover"
-		print ests
-		print char
+		# print "Mover"
+		# print ests
+		# print char
 		aux = set()
 		for est in ests:
 			aux = aux.union(set([e for (c,e) in self.delta[est] if c == char]))
@@ -343,22 +346,22 @@ class AFD:
 		#print aux
 		#print "CHAU"
 		res = set()
-		print "ClausuraLamda"
+		# print "ClausuraLamda"
 		#print self.ClausuraLamda()
 		for e in aux:
 			res = res.union(self.ClausuraLamda(e))
-		print res
+		# print res
 		return list(res)
 
 	def ClausuraLamda(self,e):
-		print e
+		# print e
 		res = set([e])
 		porRecorrer = set([e])  
 		while len(porRecorrer) > 0:
 			aux = self.aUnPasoLamda(porRecorrer.pop()).difference(res)
 			res = res.union(aux)
 			porRecorrer = porRecorrer.union(aux)
-		print res
+		# print res
 		return res
 
 
@@ -501,21 +504,25 @@ class AFD:
 					if letra == letrasAImprimir[est2][0]:
 						# Casos letras especiales
 						if letra == "\t":
-							letra = "\\t"
+							letra = "\\\\t"
 						if letra == nuestroLambda:
 							letra = "lambda"
 						if letra == " ":
 							letra = "espacio"
+						if letra == '\\':
+							letra = '\\\\ '
 							
 						file.write(letra)
 					else:
 						# Casos letras especiales
 						if letra == "\t":
-							letra = "\\t"
+							letra = "\\\\t"
 						if letra == nuestroLambda:
 							letra = "lambda"
 						if letra == " ":
 							letra = "espacio"
+						if letra == '\\':
+							letra = '\\\\ '
 
 						file.write(", " + letra)
 				file.write("\"]\n")

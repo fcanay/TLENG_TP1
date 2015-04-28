@@ -10,6 +10,6 @@ def afd_minimo(archivo_regex, archivo_automata):
     print afd.estados_finales
     print afd.alfabeto
     afd.determinizar();
-    #afd.minimizar();
+    afd.minimizar();
     afd.toDOT(archivo_automata)
     #afd.toFile(archivo_automata);

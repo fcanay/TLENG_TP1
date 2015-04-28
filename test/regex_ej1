@@ -1,11 +1,11 @@
 {CONCAT}3
 	{STAR}
 		{OR}3
-			a
+			 
 			b
 			c
 	{STAR}
 		{CONCAT}2
-			d
-			e
+			\
+			\t
 	f
