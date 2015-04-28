@@ -9,14 +9,23 @@ Implementamos el \emph{AFD} como una clase con la siguiente estructura:
 	\item alfabeto: Una lista de caracteres que representa los distintos elementos del lenguaje del \emph{AFD}
 \end{itemize}
 
-En nuestro diseño, decidimos mantener el invariante que los estados se representan con números enteros del 1 a longitud(estados). Este invariante no necesariamente se preserva en los métodos de la clase.
+Para mayor comodidad, decidimos definir el invariante de clase que los estados se representan con números enteros del 1 a N, donde N = longitud(estados).
 
-En nuestro diseño los estados se representan con numeros enteros, excepto en el metodo \emph{Determinizar} donde se representan de otra manera. %ver seccion x cuando tengamos la seccion que hable de determinizar
+Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío.
 
-Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío ('').
+Decidimos que tanto el algoritmo de completar como el de minimizar no puede asumir que el AFD de entrada es completo, por lo que lo completan.
 
 \subsection{Algoritmos Utilizados}
 
 Los algoritmos utilizados en el trabajo práctico son la implementación de los que vimos en clase, tanto en la práctica como en la teórica.
 
 \subsection{Problemas encontrados}
+
+Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
+
+Cabe aclarar que, por ejemplo para imprimir $\backslash$ vía DOT tenemos que imprimir $\backslash\backslash$. Para esto, tenemos que escapar ambas $\backslash$, por lo que en nuestro archivo .py se lee $\backslash\backslash\backslash\backslash$
+
+Cuando comenzamos a 
+
+
+
