@@ -1,5 +1,15 @@
 \subsection{Decisiones de diseño}
+Implementamos el \emph{AFD} como una clase con la siguiente estructura
 
+\begin{itemize}
+	\item estados: Una lista de enteros para representar a los estados del \emph{AFD}
+	\item estado inicial: Representa al estado inicial del \emph{AFD}
+	\item estados finales: Una lista de enteros para representar a los estados finales del \emph{AFD}
+	\item delta: Es un diccionario que dice para cada estado, que tranciciones puede tomar y hacia que estado va al tomar dichas transiciones. El diccionario tiene estados como claves y para cada estado tiene una lista de pares $<char, estado>$ como significado.
+\end{itemize}
+
+En nuestro diseño los estados se representan con numeros enteros, excepto en el metodo \emph{Determinizar} donde se representan de otra manera %ver seccion x cuando tengamos la seccion que hable de determinizar
+Además, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío.
 \subsection{Algoritmos Utilizados}
 
 \subsection{Problemas encontrados}
