@@ -1,0 +1,11 @@
+{CONCAT}3
+	{STAR}
+		{OR}3
+			 
+			b
+			c
+	{STAR}
+		{CONCAT}2
+			\
+			\t
+	f

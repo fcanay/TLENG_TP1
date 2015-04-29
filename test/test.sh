@@ -6,11 +6,11 @@ ACIERTOS="0"
 ERROR=""
 
 #Regex
-TEST_REGEX=""
+TEST_REGEX="regex_ej1 regex_ej2 regex_ej3"
 for TEST in $TEST_REGEX
 do
-python ../src/AFD.py -len "Regex/$TEST".regex -aut "$Regex/TEST".aut
-RES=`python ../src/AFD.py -equival -aut1 "$Regex/TEST".res -aut2 "$Regex/TEST".aut`
+python ../src/AFD.py -leng "Regex/$TEST".regex -aut "Regex/$TEST".aut
+RES=`python ../src/AFD.py -equival -aut1 "Regex/$TEST".res -aut2 "Regex/$TEST".aut`
 if [ $RES = "FALSE" ] ; then
 	FALLOS=$((FALLOS+1))
 	ERROR="$ERROR TEST REGEX: $TEST\n"
@@ -20,7 +20,7 @@ else
 		ACIERTOS=$((ACIERTOS+1))	
 	else
 		FALLOS=$((FALLOS+1))
-		ERROR="$ERROR fallo en equivalente, no devuelve un valor esperado en $TEST : $RES\n"
+		ERROR="$ERROR fallo en equivalente REGEX, no devuelve un valor esperado en $TEST : $RES\n"
 	fi
 fi
 done
@@ -79,7 +79,7 @@ else
 		ACIERTOS=$((ACIERTOS+1))	
 	else
 		FALLOS=$((FALLOS+1))
-		ERROR="$ERROR fallo en equivalente, no devuelve un valor esperado en $TEST : $RES\n"
+		ERROR="$ERROR fallo en equivalente INTERSECCION, no devuelve un valor esperado en $TEST : $RES\n"
 	fi
 fi
 done
@@ -101,7 +101,7 @@ else
 		ACIERTOS=$((ACIERTOS+1))	
 	else
 		FALLOS=$((FALLOS+1))
-		ERROR="$ERROR fallo en equivalente, no devuelve un valor esperado en $TEST : $RES\n"
+		ERROR="$ERROR fallo en equivalente COMPLEMENTO, no devuelve un valor esperado en $TEST : $RES\n"
 	fi
 fi
 done
