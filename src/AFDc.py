@@ -18,11 +18,11 @@ def partition(s):
 
 def fromRegex(regex_file):
 	lines = regex_file.readlines()
-	return  createFromRegex(lines)
+	return createFromRegex(lines)
 
 def createFromRegex(s):
-	if s[0][0] != '{':
-		if s[0][0] == '\\' and len(s) > 1 and s[0][1] == 't':
+	if s[0][0] != '{':		
+		if s[0][0] == '\\' and len(s[0]) > 1 and s[0][1] == 't':
 			return letra('\t')
 		return letra(s[0][0])
 	parts = partition(s)
@@ -53,7 +53,6 @@ def letra(caracter):
 	res.agregar_transicion(1, caracter, 2)
 	res.estados_finales = [2]
 	res.estado_inicial = 1
-	# print res.alfabeto
 	return res
 
 def lambdaAFD():
@@ -63,26 +62,27 @@ def lambdaAFD():
 	res.estado_inicial = 1
 	return res
 
-#TODO Funciona si el archivo tiene numeros en los nombres, sino cambiarlos antes de devolver el AFD
 def fromFile(file):
 	afd = AFD()
-	matching = {}
 
-	auxEstados = file.next().split()
+	auxEstados = file.next().replace('\n','').split('\t')
 	for est in auxEstados:
-		matching[est] = afd.agregar_estado()
+		afd.estados.append(est)
+		afd.delta[est] = []
 
-	afd.alfabeto = file.next().split()
+	afd.alfabeto = file.next().replace('\n','').split('\t')
 
-	afd.estado_inicial = int(file.next().split()[0])
+	afd.estado_inicial = file.next().split()[0]
 
-	auxEstados = file.next().split()
+	auxEstados = file.next().replace('\n','').split('\t')
 	for est in auxEstados:
-		afd.estados_finales.append(int(est))
+		afd.estados_finales.append(est)
 
 	for line in file:
-		pieces = line.split()
-		afd.agregar_transicion(matching[pieces[0]], pieces[1], matching[pieces[2]])
+		pieces = line.replace('\n','').split('\t')
+		afd.agregar_transicion(pieces[0], pieces[1], pieces[2])
+
+	afd.nodosToInt()
 
 	return afd
 		
@@ -164,26 +164,26 @@ class AFD:
 
 	#casos recursivos
 	def concat(self, otroAFD):
-		print self.estados
-		print self.delta
-		print self.estado_inicial
-		print self.estados_finales
-		print self.alfabeto
-		print "OTRO"
-		print otroAFD.estados
-		print otroAFD.delta
-		print otroAFD.estado_inicial
-		print otroAFD.estados_finales
-		print otroAFD.alfabeto
+		# print self.estados
+		# print self.delta
+		# print self.estado_inicial
+		# print self.estados_finales
+		# print self.alfabeto
+		# print "OTRO"
+		# print otroAFD.estados
+		# print otroAFD.delta
+		# print otroAFD.estado_inicial
+		# print otroAFD.estados_finales
+		# print otroAFD.alfabeto
 		#Reorganizo estados y delta
 		otroAFD.reorganizarEstados(len(self.estados))
 
-		print "OTRO REORGANIZADO"
-		print otroAFD.estados
-		print otroAFD.delta
-		print otroAFD.estado_inicial
-		print otroAFD.estados_finales
-		print otroAFD.alfabeto
+		# print "OTRO REORGANIZADO"
+		# print otroAFD.estados
+		# print otroAFD.delta
+		# print otroAFD.estado_inicial
+		# print otroAFD.estados_finales
+		# print otroAFD.alfabeto
 
 		for x in xrange(0,len(otroAFD.estados)):
 			self.agregar_estado()
@@ -471,8 +471,10 @@ class AFD:
 		lineas.append( tab.join(lineasAux) )
 
 		lineasAux = []
-		for est in self.alfabeto:
-			lineasAux.append(str(est))
+		for simbolo in self.alfabeto:
+			if simbolo == "\t":
+					simbolo = "\\t"
+			lineasAux.append(str(simbolo))
 		lineas.append( tab.join(lineasAux) )
 
 		lineas.append( str(self.estado_inicial) )
@@ -484,6 +486,8 @@ class AFD:
 
 		for transicion in self.delta:
 			for (simbolo,estado) in self.delta[transicion]:
+				if simbolo == "\t":
+					simbolo = "\\t"
 				lineas.append(tab.join([str(transicion), str(simbolo), str(estado)]))
 
 		for linea in lineas:
@@ -518,7 +522,7 @@ class AFD:
 				for letra in letrasAImprimir[est2]:
 					if letra == letrasAImprimir[est2][0]:
 						# Casos letras especiales
-						if letra == "\t":
+						if letra == "\\t":
 							letra = "\\\\t"
 						if letra == nuestroLambda:
 							letra = "lambda"
@@ -530,7 +534,7 @@ class AFD:
 						file.write(letra)
 					else:
 						# Casos letras especiales
-						if letra == "\t":
+						if letra == "\\t":
 							letra = "\\\\t"
 						if letra == nuestroLambda:
 							letra = "lambda"
