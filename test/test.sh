@@ -66,7 +66,7 @@ do
 done
 
 #Interseccion
-TEST_INTERSECCION="triplas0"
+TEST_INTERSECCION="triplas0 caracteres"
 for TEST in $TEST_INTERSECCION
 do
 python ../src/AFD.py -intersec -aut1 "Interseccion/$TEST".1.autin -aut2 "Interseccion/$TEST".2.autin -aut "Interseccion/$TEST".aut

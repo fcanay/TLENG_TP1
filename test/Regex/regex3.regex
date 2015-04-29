@@ -1,0 +1,14 @@
+{CONCAT}4
+	{STAR}
+		{OR}2
+			 
+			c
+	{PLUS}
+		\
+	{PLUS}
+		\t
+	{STAR}
+		{OR}3
+			f
+			g
+			h
