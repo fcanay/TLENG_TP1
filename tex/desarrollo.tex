@@ -13,31 +13,28 @@ Para mayor comodidad, decidimos definir el siguiente invariante de clase: los es
 
 Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío.
 
-Decidimos que tanto el algoritmo que calcula el complemento de un \emph{AFD} como el algoritmo que lo minimiza no pueden asumir que el AFD de entrada es completo. Por lo tanto, al principio de ambos algoritmos, se llama al método completar del grafo que reciben.
+Decidimos que tanto el algoritmo que calcula el complemento de un \emph{AFD} como el algoritmo que lo minimiza no pueden asumir que el \emph{AFD} de entrada es completo. Por lo tanto, al principio de ambos algoritmos, se llama al método completar del grafo que reciben.
 
 \subsection{Algoritmos Utilizados}
 
 Los algoritmos utilizados en el trabajo práctico son la implementación de los que vimos en clase, tanto en la práctica como en la teórica.
 
-Al implementar los algoritmos \emph{Minimizar} y \emph{Determinizar} utilizamos los algoritmos vistos en la clase práctica.
+Al implementar los algoritmos minimizar y determinizar utilizamos los algoritmos vistos en la clase práctica.
 
-Para transformar de una expresión regular a un \emph{AFD}, basamos el algoritmo en la construcción utilizada en la demostración vista en la clase teórica del teorema que refiere a este mismo tema. Lo mismo ocurre con los algoritmos de la intersección y complemento de \emph{AFDs}.
+Para transformar de una expresión regular a un \emph{AFD}, nos basamos el algoritmo en la construcción utilizada en la demostración vista en la clase teórica del teorema que refiere a este mismo tema. Lo mismo ocurre con los algoritmos de la intersección y complemento de \emph{AFDs}.
 
-Para implementar el algoritmo que determina equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo.Concluimos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
+Para implementar el algoritmo que determina equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo. Concluímos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
 
 
 \subsection{Problemas encontrados}
 
 Cuando comenzamos a implementar el trabajo práctico nos enfrentamos al problema de cómo representar a los nodos. Esto podía llegar a ser un problema ya que no podemos repetir el nombre de los nodos.
 
-Originalmente los habíamos nombrado \emph{$q_i$} con $i$ natural. Además manteníamos un invariante de nombrar los nodos $q_1$, $q_2$, $\hdots$, $q_n$, sea n la cantidad de estados del \emph{AFD}. Esto resultó ser demasiada molestia ya que la $q$ formaba parte del nombre.
+Originalmente, los habíamos nombrado \emph{$q_i$} con $i$ natural. Además manteníamos un invariante de nombrar los nodos $q_1$, $q_2$, $\hdots$, $q_n$, sea n la cantidad de estados del \emph{AFD}. Esto resultó ser demasiada molestia ya que la $q$ formaba parte del nombre.
 
-Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nombrar los nodos $1$, $2$, $\hdots$, $n$, con sea n la cantidad de estados del \emph{AFD}. De esta forma, para agregar un nuevo nodo a nuestro AFD simplemente agregamos el entero $\#estados + 1$ a la lista de estados del AFD.
+Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nombrar los nodos $1$, $2$, $\hdots$, $n$, siendo n la cantidad de estados del \emph{AFD}. De esta forma, para agregar un nuevo nodo a nuestro AFD simplemente agregamos el entero $\#estados + 1$ a la lista de estados del AFD.
 
 
 Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir las transiciones $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
 
 Cabe aclarar que, por ejemplo para imprimir $\backslash$ vía DOT tenemos que imprimir $\backslash\backslash$. Para esto, tenemos que escapar ambas $\backslash$, por lo que en nuestro archivo .py se lee $\backslash\backslash\backslash\backslash$
-
-
-
