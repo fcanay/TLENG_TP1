@@ -27,7 +27,7 @@ fi
 done
 
 #Acepta
-TEST_ACEPTA="triplas0 minimizado noMinimizado"
+TEST_ACEPTA="triplas0 minimizado noMinimizado noComienzaConUno"
 for TEST in $TEST_ACEPTA
 do
 	while read PALABRA
@@ -88,7 +88,7 @@ done
 
 
 #Complemento
-TEST_COMPLEMENTO="triplas0"
+TEST_COMPLEMENTO="triplas0 comienzaConUno"
 for TEST in $TEST_COMPLEMENTO
 do
 python ../src/AFD.py -complemento -aut1 "Complemento/$TEST".autin -aut "Complemento/$TEST".aut
