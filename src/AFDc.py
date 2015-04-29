@@ -20,6 +20,7 @@ def fromRegex(regex_file):
 	lines = regex_file.readlines()
 	return createFromRegex(lines)
 
+#Define un automata recursivamente a partir de una expresion regular
 def createFromRegex(s):
 	if s[0][0] != '{':		
 		if s[0][0] == '\\' and len(s[0]) > 1 and s[0][1] == 't':
@@ -42,7 +43,7 @@ def createFromRegex(s):
 			afd.orAFD(createFromRegex(parts[x]))
 	return afd
 
-#casos base
+#casos base de creacion de automata
 def letra(caracter):
 	res = AFD()
 	# print "HOLALALALALALLAALALAL"
