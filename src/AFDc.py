@@ -81,7 +81,8 @@ def fromFile(file):
 
 	for line in file:
 		pieces = line.replace('\n','').split('\t')
-		afd.agregar_transicion(pieces[0], pieces[1], pieces[2])
+		if len(pieces) == 3:
+			afd.agregar_transicion(pieces[0], pieces[1], pieces[2])
 
 	afd.nodosToInt()
 
