@@ -11,7 +11,7 @@ Implementamos el \emph{AFD} como una clase con la siguiente estructura:
 
 Para mayor comodidad, decidimos definir el siguiente invariante de clase: los estados se representan con números enteros del 1 a N, donde N es igual a la longitud de la lista de estados de la clase.
 
-Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío.
+Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen la cadena vacía.
 
 Decidimos que tanto el algoritmo que calcula el complemento de un \emph{AFD} como el algoritmo que lo minimiza no pueden asumir que el \emph{AFD} de entrada es completo. Por lo tanto, al principio de ambos algoritmos, se llama al método completar del grafo que reciben.
 
@@ -23,8 +23,7 @@ Al implementar los algoritmos minimizar y determinizar utilizamos los algoritmos
 
 Para transformar de una expresión regular a un \emph{AFD}, nos basamos el algoritmo en la construcción utilizada en la demostración vista en la clase teórica del teorema que refiere a este mismo tema. Lo mismo ocurre con los algoritmos de la intersección y complemento de \emph{AFDs}.
 
-Para implementar el algoritmo que determina equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo. Concluímos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
-
+Para implementar el algoritmo que verifica equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo. Concluimos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
 
 \subsection{Problemas encontrados}
 
