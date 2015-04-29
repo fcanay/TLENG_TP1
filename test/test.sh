@@ -11,6 +11,7 @@ for TEST in $TEST_REGEX
 do
 python ../src/AFD.py -leng "Regex/$TEST".regex -aut "Regex/$TEST".aut
 RES=`python ../src/AFD.py -equival -aut1 "Regex/$TEST".res -aut2 "Regex/$TEST".aut`
+rm "Regex/$TEST".aut
 if [ $RES = "FALSE" ] ; then
 	FALLOS=$((FALLOS+1))
 	ERROR="$ERROR TEST REGEX: $TEST\n"
@@ -70,6 +71,7 @@ for TEST in $TEST_INTERSECCION
 do
 python ../src/AFD.py -intersec -aut1 "Interseccion/$TEST".1.autin -aut2 "Interseccion/$TEST".2.autin -aut "Interseccion/$TEST".aut
 RES=`python ../src/AFD.py -equival -aut1 "Interseccion/$TEST".res -aut2 "Interseccion/$TEST".aut`
+rm "Interseccion/$TEST".aut
 if [ $RES = "FALSE" ] ; then
 	FALLOS=$((FALLOS+1))
 	ERROR="$ERROR TEST INTERSECCION: $TEST\n"
@@ -91,6 +93,7 @@ for TEST in $TEST_COMPLEMENTO
 do
 python ../src/AFD.py -complemento -aut1 "Complemento/$TEST".autin -aut "Complemento/$TEST".aut
 RES=`python ../src/AFD.py -equival -aut1 "Complemento/$TEST".res -aut2 "Complemento/$TEST".aut`
+rm  "Complemento/$TEST".aut
 if [ $RES = "FALSE" ] 
 then
 	FALLOS=$((FALLOS+1))
