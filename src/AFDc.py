@@ -86,9 +86,6 @@ def fromFile(file):
 
 	return afd
 		
-def partes(lista):
-	return
-		
 class AFD:
 
 		# lista de estados del AFD

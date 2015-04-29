@@ -5,15 +5,15 @@ Implementamos el \emph{AFD} como una clase con la siguiente estructura:
 	\item estados: Una lista de enteros para representar a los estados del \emph{AFD}
 	\item estado\_inicial: Representa al estado inicial del \emph{AFD}
 	\item estados\_finales: Una lista de enteros para representar a los estados finales del \emph{AFD}
-	\item delta: Es un diccionario que dice para cada estado, que tranciciones puede tomar y hacia que estado va al tomar dichas transiciones. El diccionario tiene estados como claves y para cada estado tiene una lista de pares $<char, estado>$ como significado.
+	\item delta: Es un diccionario que dice, para cada estado, que tranciciones puede tomar y hacia que estado va al tomar dichas transiciones. El diccionario tiene estados como claves y para cada estado tiene una lista de pares $<char, estado>$ como significado.
 	\item alfabeto: Una lista de caracteres que representa los distintos elementos del lenguaje del \emph{AFD}
 \end{itemize}
 
-Para mayor comodidad, decidimos definir el invariante de clase que los estados se representan con números enteros del 1 a N, donde N = longitud(estados).
+Para mayor comodidad, decidimos definir el siguiente invariante de clase: los estados se representan con números enteros del 1 a N, donde N es igual a la longitud de la lista de estados de la clase.
 
 Por otro lado, tomamos como transición $\lambda$ a las transiciones que tienen el caracter vacío.
 
-Decidimos que tanto el algoritmo de completar como el de minimizar no puede asumir que el AFD de entrada es completo, por lo que lo completan.
+Decidimos que tanto el algoritmo que calcula el complemento de un \emph{AFD} como el algoritmo que lo minimiza no pueden asumir que el AFD de entrada es completo. Por lo tanto, al principio de ambos algoritmos, se llama al método completar del grafo que reciben.
 
 \subsection{Algoritmos Utilizados}
 
@@ -23,19 +23,19 @@ Al implementar los algoritmos \emph{Minimizar} y \emph{Determinizar} utilizamos 
 
 Para transformar de una expresión regular a un \emph{AFD}. Basamos el algoritmo en la construcción utilizada en la demostración vista en la clase teórica del teorema que refiere a este mismo tema. Lo mismo ocurre con los algoritmos de la intersección y complemento de \emph{AFDs}.
 
-Para imlementar el algoritmo que determina equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo.Concluimos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
+Para implementar el algoritmo que determina equivalencia entre \emph{AFDs} calculamos el complemento de uno de los dos autómatas y lo intersecamos con el segundo.Concluimos que son equivalentes si y sólo dicha intersección resulta ser el autómata que acepta el lenguaje vacío.
 
 
 \subsection{Problemas encontrados}
 
 Cuando comenzamos a implementar el trabajo práctico nos enfrentamos al problema de cómo representar a los nodos. Esto podía llegar a ser un problema ya que no podemos repetir el nombre de los nodos.
 
-Originalmente los habíamos nombrado \emph{$q_i$} con $i$ natural. Además manteníamos un invariante de nombrar los nodos $q_1$, $q_2$, $\hdots$, $q_n$, con n = longitud(estados). Esto resultó ser demasiada molestia ya que la $q$ formaba parte del nombre.
+Originalmente los habíamos nombrado \emph{$q_i$} con $i$ natural. Además manteníamos un invariante de nombrar los nodos $q_1$, $q_2$, $\hdots$, $q_n$, sea n la cantidad de estados del \emph{AFD}. Esto resultó ser demasiada molestia ya que la $q$ formaba parte del nombre.
 
-Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nombrar los nodos $1$, $2$, $\hdots$, $n$, con n = longitud(estados). De esta forma, para agregar un nuevo nodo a nuestro AFD simplemente agregamos $longitud(estados) + 1$ a la lista de estados del AFD.
+Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nombrar los nodos $1$, $2$, $\hdots$, $n$, con n = longitud(estados). De esta forma, para agregar un nuevo nodo a nuestro AFD simplemente agregamos el entero $longitud(estados) + 1$ a la lista de estados del AFD.
 
 
-Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
+Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir las transiciones $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
 
 Cabe aclarar que, por ejemplo para imprimir $\backslash$ vía DOT tenemos que imprimir $\backslash\backslash$. Para esto, tenemos que escapar ambas $\backslash$, por lo que en nuestro archivo .py se lee $\backslash\backslash\backslash\backslash$
 
