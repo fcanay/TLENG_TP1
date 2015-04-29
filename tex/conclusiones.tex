@@ -1,7 +1,4 @@
-%TODO no estan hechas!
+Como conclusion, queremos recalcar que al momento de realizar una implementación, vale la pena replantearse el diseño de la misma. En nuestro caso, si hubieramos mantenido el orden de los nodos como habíamos hecho al principio. O sea $q_1 \dots,  q_n$ nos habría ocacionado complicaciones más adelante.
 
-Para concluir, nos parece importante aclarar que ningún scheduler es el scheduler definitivo, sino que cada uno tiene sus fortalezas y debilidades. Va a depender del contexto de uso y del programador que implemente el algoritmo del scheduler utilizar uno u otro.
-
-Por ejemplo, FCFS es muy bueno en términos de minimizar el tiempo entre comenzar y terminar las tareas, o si el context switch es muy caro, pero su performance empeora cuando las tareas realizan muchas llamadas bloqueantes.
-
-Por otro lado, si tenemos un sistema en tiempo real probablemente utilicemos el algoritmo Relative urgency.
+ 
+También, creemos que es importante pensar distintas implementaciones de un cierto algoritmo antes de programarlo. En este trabajo práctico, nos sucedió que vimos una implementación de un algoritmo en la teorica y decidimos implementarlo. Posteriormente, en la clase práctivca vimos otra implementación del mismo algoritmo, la cual resultó ser bastante más fácil de implementar que el primer algoritmo que nos habíamos propuesto.
