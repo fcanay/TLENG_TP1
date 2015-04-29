@@ -549,6 +549,8 @@ class AFD:
 	def interseccion(self, afd1):
 
 		res = AFD()
+		# print self.alfabeto
+		# print afd1.alfabeto
 		res.alfabeto = list(set(self.alfabeto).intersection(set(afd1.alfabeto)))
 		#Estados y delta
 		for nodo1 in self.estados:
@@ -606,9 +608,19 @@ class AFD:
 		self.estado_inicial = dicc[self.estado_inicial]
 		self.estados_finales = [dicc[e] for e in self.estados_finales]
 
-	def	equivalente(self, adf1):
-		self.interseccion(afd1.complemento())
+	def	equivalente(self, afd1):
+		afd1.complemento()
+		self.interseccion(afd1)
+		self.minimizar()
 		return self.esVacio()
 
+	# Para ver si un automata ya minimizado es vacio, checkeamos si el inicial no esta en los finales (es decir, no acepta lambda)
+	# y, por otro lado, que el inicial no pueda llegar con ninguna cadena a un estado final.
 	def esVacio(self):
-		return len(self.estados_finales) == 0
+		vacio = self.estado_inicial not in self.estados_finales
+
+		for (char, estado) in self.delta[self.estado_inicial]:
+			if estado != self.estado_inicial:
+				vacio = False
+
+		return vacio
