@@ -26,7 +26,7 @@ fi
 done
 
 #Acepta
-TEST_ACEPTA="triplas0"
+TEST_ACEPTA="triplas0 minimizado noMinimizado"
 for TEST in $TEST_ACEPTA
 do
 	while read PALABRA
