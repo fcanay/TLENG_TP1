@@ -89,13 +89,13 @@ def fromFile(file):
 		
 class AFD:
 
-		# lista de estados del AFD
-		#estados
-		#Funcion de transicion de estados -> (char,estado)
-		#delta
-		#estados_finales
-		#alfabeto
-		#estado_inicial
+		# estados
+			# lista de estados del AFD
+		# delta
+			# Funcion de transicion de estados -> (char,estado)
+		# estados_finales
+		# alfabeto
+		# estado_inicial
 
 	def __init__(self):
 		self.estados = []
@@ -145,7 +145,16 @@ class AFD:
 
 		return valeCadena
 
-	#casos recursivos
+	def reorganizarEstados(self, i):
+		deltaAux = {}
+		for est in self.estados:
+			deltaAux[est+i] = [(char,e + i) for (char,e) in self.delta[est]]
+		self.delta = deltaAux
+		self.estados = [est + i for est in self.estados]
+		self.estado_inicial += i
+		self.estados_finales = [est + i for est in self.estados_finales]
+
+	#casos recursivos de creacion de automata
 	def concat(self, otroAFD):
 		#Reorganizo estados y delta
 		otroAFD.reorganizarEstados(len(self.estados))
@@ -165,16 +174,6 @@ class AFD:
 		
 		#Nuevo Alfabeto
 		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
-
-
-	def reorganizarEstados(self, i):
-		deltaAux = {}
-		for est in self.estados:
-			deltaAux[est+i] = [(char,e + i) for (char,e) in self.delta[est]]
-		self.delta = deltaAux
-		self.estados = [est + i for est in self.estados]
-		self.estado_inicial += i
-		self.estados_finales = [est + i for est in self.estados_finales]
 
 	def star(self):
 		#Reorganizo estados y delta
@@ -204,7 +203,6 @@ class AFD:
 
 	def orAFD(self, otroAFD):
 		#Reorganizo estados y delta
-		
 		otroAFD.reorganizarEstados(len(self.estados))
 		for x in xrange(0,len(otroAFD.estados)):
 			self.agregar_estado()
@@ -229,7 +227,6 @@ class AFD:
 		#Nuevo Alfabeto     
 		self.alfabeto = list(set(self.alfabeto + otroAFD.alfabeto))
 
-	#Asumimos AFND y no AFND-lambda
 	def determinizar(self):
 
 		res = AFD()
@@ -257,12 +254,14 @@ class AFD:
 					break
 
 		res.nodosToInt()
+
 		self.estados = res.estados
 		self.estados_finales = res.estados_finales
 		self.estado_inicial= res.estado_inicial
 		self.alfabeto = res.alfabeto
 		self.delta = res.delta
 
+	#Auxiliares de determinizar
 	def Mover(self,ests,char):
 		aux = set()
 		for est in ests:
@@ -281,11 +280,9 @@ class AFD:
 			porRecorrer = porRecorrer.union(aux)
 		return res
 
-
 	def aUnPasoLamda(self,e):
 		return set([ x for (char,x) in self.delta[e] if x!=e and char == nuestroLambda])
 	
-
 	#Minimizar se llama siempre que el AF sea deterministico
 	def minimizar(self):
 		self.completar()
@@ -313,7 +310,6 @@ class AFD:
 		self.estado_inicial = res.estado_inicial
 		self.alfabeto = res.alfabeto
 		self.delta = res.delta
-
 
 	def dameClasesEquiv(self):
 		congruenciaVieja = {}
@@ -352,8 +348,7 @@ class AFD:
 			
 		return congruenciaNueva, matrizDeResultados
 
-
-	#Solo usar si sabes que esta
+	#Solo usar si sabes que esta la transicion
 	def dameTransicion(self, est, letra):
 		for (char,estado) in self.delta[est]:
 			if char == letra:
@@ -446,8 +441,6 @@ class AFD:
 
 		file.write("}")
 		
-	#Suponemos que al concatenar los nombres de los nodos, no estamos repitiendo
-	#Ejemplo, NO PASA: nodo1 = a, nodo2 = ba por un lado y nodo1 = ab, nodo2 = a por otro.
 	def interseccion(self, afd1):
 
 		res = AFD()
@@ -494,6 +487,7 @@ class AFD:
 						estaCompleto = False
 					self.agregar_transicion(e,char,i)
 
+	# Toma un automata cuyos estados son de cualquier tipo y devuelve uno equivalente con estados enteros de 1 a len(estados)
 	def nodosToInt(self):
 		dicc = {}
 		estados = range(1, len(self.estados) + 1)
