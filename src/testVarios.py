@@ -1,5 +1,7 @@
 #python testVarios.py; dot -Tps blabla.dot -o blabla.ps
 
+import AFDc.py
+
 def main():
 	x = AFD()
 	x.estados = [1,2,3,4,5,6, 7]
@@ -8,8 +10,11 @@ def main():
 	x.alfabeto = ['a', 's', 'o']
 	x.estado_inicial = 1
 	x.completar()
-	x = x.minimizar()
-	x.toDOT('blabla.dot')
+	x.minimizar()
+	print("QUe onda")
+	with open('intersec.txt', 'w') as archivo:
+		archivo.write("bla")
+		x.toFile(archivo)
 
 	# x = AFD()
 	# x.estados = [1,2,3,4,5,6, 7]
@@ -45,3 +50,6 @@ def main():
 	# x.alfabeto = ['a','b']
 	# x.estado_inicial = 1
 	# x.toDOT('blabla.dot')
+
+if __name__ == '__main__':
+	main()

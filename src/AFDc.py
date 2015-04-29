@@ -76,7 +76,8 @@ def fromFile(file):
 
 	auxEstados = file.next().replace('\n','').split('\t')
 	for est in auxEstados:
-		afd.estados_finales.append(est)
+		if est != "":
+			afd.estados_finales.append(est)
 
 	for line in file:
 		pieces = line.replace('\n','').split('\t')
