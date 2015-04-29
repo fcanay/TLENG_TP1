@@ -617,10 +617,16 @@ class AFD:
 	# Para ver si un automata ya minimizado es vacio, checkeamos si el inicial no esta en los finales (es decir, no acepta lambda)
 	# y, por otro lado, que el inicial no pueda llegar con ninguna cadena a un estado final.
 	def esVacio(self):
-		vacio = self.estado_inicial not in self.estados_finales
+		yaRecorri = set()
+		porRecorrer = set([self.estado_inicial])
 
-		for (char, estado) in self.delta[self.estado_inicial]:
-			if estado != self.estado_inicial:
-				vacio = False
+		while len(porRecorrer) > 0:
+			actual = porRecorrer.pop()
+			if actual in self.estados_finales:
+				return False
+			yaRecorri.add(actual)
+			for (char,e) in self.delta[actual]:
+				if e not in yaRecorri:
+					porRecorrer.add(e)
 
-		return vacio
+		return True
