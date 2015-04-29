@@ -1,0 +1,9 @@
+{STAR}
+	{CONCAT}3
+		h
+		{OR}2
+			h
+			{CONCAT}2
+				p
+				p
+		h
