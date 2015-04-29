@@ -31,6 +31,7 @@ do
 			if  [ $RES != "TRUE"]; then
 				cout "ERROR fallo en ACEPTA, no devuelve un valor esperado: $TEST,$PALABRA"
 			fi
+		fi
 	done < "$TEST".acepta
 
 	while read PALABRA
@@ -42,8 +43,8 @@ do
 			if  [ $RES != "FALSE"]; then
 				cout "ERROR fallo en ACEPTA, no devuelve un valor esperado: $TEST,$PALABRA"
 			fi
+		fi
 	done < "$TEST".noacepta
-fi
 done
 
 #Interseccion
