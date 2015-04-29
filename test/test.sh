@@ -6,7 +6,7 @@ ACIERTOS="0"
 ERROR=""
 
 #Regex
-TEST_REGEX="regex_ej1 regex_ej2 regex_ej3"
+TEST_REGEX="regex_ej1 regex_ej2 regex_ej3 regex3"
 for TEST in $TEST_REGEX
 do
 python ../src/AFD.py -leng "Regex/$TEST".regex -aut "Regex/$TEST".aut
@@ -88,7 +88,7 @@ done
 
 
 #Complemento
-TEST_COMPLEMENTO="triplas0 comienzaConUno"
+TEST_COMPLEMENTO="triplas0 comienzaConUno hp"
 for TEST in $TEST_COMPLEMENTO
 do
 python ../src/AFD.py -complemento -aut1 "Complemento/$TEST".autin -aut "Complemento/$TEST".aut
