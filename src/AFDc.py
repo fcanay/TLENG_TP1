@@ -164,10 +164,28 @@ class AFD:
 
 	#casos recursivos
 	def concat(self, otroAFD):
+		print self.estados
+		print self.delta
+		print self.estado_inicial
+		print self.estados_finales
+		print self.alfabeto
+		print "OTRO"
+		print otroAFD.estados
+		print otroAFD.delta
+		print otroAFD.estado_inicial
+		print otroAFD.estados_finales
+		print otroAFD.alfabeto
 		#Reorganizo estados y delta
 		otroAFD.reorganizarEstados(len(self.estados))
 
-		for x in xrange(0,len(self.estados)):
+		print "OTRO REORGANIZADO"
+		print otroAFD.estados
+		print otroAFD.delta
+		print otroAFD.estado_inicial
+		print otroAFD.estados_finales
+		print otroAFD.alfabeto
+
+		for x in xrange(0,len(otroAFD.estados)):
 			self.agregar_estado()
 
 		for e in otroAFD.estados:
