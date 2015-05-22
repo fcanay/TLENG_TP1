@@ -1,0 +1,12 @@
+{CONCAT}5
+	{STAR}
+		{OR}2
+			a
+			b
+	a
+	a
+	a
+	{STAR}
+		{OR}2
+			a
+			b

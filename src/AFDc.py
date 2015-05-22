@@ -442,35 +442,11 @@ class AFD:
 		file.write("}")
 		
 	def interseccion(self, afd1):
+		self.complemento()
+		afd1.complemento()
+		self.orAFD(afd1)
+		self.complemento()
 
-		res = AFD()
-		res.alfabeto = list(set(self.alfabeto).intersection(set(afd1.alfabeto)))
-		#Estados y delta
-		for nodo1 in self.estados:
-			for nodo2 in afd1.estados:
-				res.estados.append((nodo1,nodo2))
-				
-				if (nodo1 in self.estados_finales) and (nodo2 in afd1.estados_finales):
-					res.estados_finales.append((nodo1,nodo2))
-
-				if (nodo1 == self.estado_inicial) and (nodo2 == afd1.estado_inicial):
-					res.estado_inicial = (nodo1,nodo2)
-
-		for nodo1 in self.estados:
-			for nodo2 in afd1.estados:
-				res.delta[(nodo1, nodo2)] = []
-				for (char1, estado1) in self.delta[nodo1]:
-					for (char2, estado2) in afd1.delta[nodo2]:
-						if(char1 == char2):
-							res.agregar_transicion((nodo1,nodo2), char1, (estado1,estado2))
-
-		res.nodosToInt()
-
-		self.alfabeto = res.alfabeto
-		self.estados = res.estados
-		self.estados_finales = res.estados_finales
-		self.estado_inicial = res.estado_inicial
-		self.delta = res.delta
 
 	def complemento(self):
 		self.completar()
