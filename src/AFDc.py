@@ -442,9 +442,18 @@ class AFD:
 		file.write("}")
 		
 	def interseccion(self, afd1):
+		# Amplio alfabetos para que ambos tengan el mismo
+		alfabetoGrande = list(set(self.alfabeto + afd1.alfabeto))
+		self.alfabeto = alfabetoGrande
+		afd1.alfabeto = alfabetoGrande
+
 		self.complemento()
 		afd1.complemento()
 		self.orAFD(afd1)
+
+		# Arreglamos AFD antes de complementarlo porque orAFD no te asegura que sea deterministico, o completo
+		self.determinizar()
+		self.minimizar()
 		self.complemento()
 
 
@@ -479,10 +488,17 @@ class AFD:
 		self.estados_finales = [dicc[e] for e in self.estados_finales]
 
 	def	equivalente(self, afd1):
-		afd1.complemento()
-		self.interseccion(afd1)
-		self.minimizar()
-		return self.esVacio()
+		if set(self.alfabeto) == set(afd1.alfabeto):
+			return self.incluidoEn(afd1) and afd1.incluidoEn(self)
+		return False
+
+	def incluidoEn(self, afd1):
+		selfAux = self.copy()
+		afd1Aux = afd1.copy()
+		afd1Aux.complemento()
+		selfAux.interseccion(afd1Aux)
+		selfAux.minimizar()
+		return selfAux.esVacio()
 
 	# Para ver si un automata ya minimizado es vacio, checkeamos si el inicial no esta en los finales (es decir, no acepta lambda)
 	# y, por otro lado, que el inicial no pueda llegar con ninguna cadena a un estado final.
