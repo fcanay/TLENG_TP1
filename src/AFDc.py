@@ -442,19 +442,24 @@ class AFD:
 		file.write("}")
 		
 	def interseccion(self, afd1):
+		#El alfabeto final es la interseccion de ambos
+		alfabetoFinal = [caracter for caracter in self.alfabeto if caracter in afd1.alfabeto]
 		# Amplio alfabetos para que ambos tengan el mismo
 		alfabetoGrande = list(set(self.alfabeto + afd1.alfabeto))
 		self.alfabeto = alfabetoGrande
-		afd1.alfabeto = alfabetoGrande
+		#TODO: Habria que hacer una copia para no cambiar afd1?
+		afd1Aux = afd1.copy()
+		afd1Aux.alfabeto = alfabetoGrande 
 
 		self.complemento()
-		afd1.complemento()
-		self.orAFD(afd1)
+		afd1Aux.complemento()
+		self.orAFD(afd1Aux)
 
 		# Arreglamos AFD antes de complementarlo porque orAFD no te asegura que sea deterministico, o completo
 		self.determinizar()
 		self.minimizar()
 		self.complemento()
+		self.alfabeto = alfabetoFinal
 
 
 	def complemento(self):
@@ -488,9 +493,13 @@ class AFD:
 		self.estados_finales = [dicc[e] for e in self.estados_finales]
 
 	def	equivalente(self, afd1):
-		if set(self.alfabeto) == set(afd1.alfabeto):
-			return self.incluidoEn(afd1) and afd1.incluidoEn(self)
-		return False
+		#Ampliamos alfabetos para luego preguntar equivalencia
+		alfabetoGrande = list(set(self.alfabeto + afd1.alfabeto))
+		selfAux = self.copy()
+		afd1Aux = afd1.copy()
+		selfAux.alfabeto = alfabetoGrande
+		afd1Aux.alfabeto = alfabetoGrande
+		return selfAux.incluidoEn(afd1Aux) and afd1Aux.incluidoEn(selfAux)
 
 	def incluidoEn(self, afd1):
 		selfAux = self.copy()
