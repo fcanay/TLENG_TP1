@@ -37,3 +37,8 @@ Por esto, decidimos deshacernos de la $q$ y mantener un invariante similar: nomb
 Durante la implementación del método \emph{toDOT} nos encontramos con el problema de cómo imprimir las transiciones $\lambda$, los caracteres espacio, tab y $\backslash$. Decidimos imprimirlos como \emph{lambda}, \emph{espacio},  \emph{$\backslash$t} y $\backslash$, respectivamente.
 
 Cabe aclarar que, por ejemplo para imprimir $\backslash$ vía DOT tenemos que imprimir $\backslash\backslash$. Para esto, tenemos que escapar ambas $\backslash$, por lo que en nuestro archivo .py se lee $\backslash\backslash\backslash\backslash$
+
+\subsection{Cambios en la Re-entrega}
+Hicimos dos cambios en la re-entrega del trabajo práctico. El primero de los cambios fue en el método \emph{interseccion}. En el caso donde los alfabetos de los autómatas intersecados difieran, nos quedamos con la intersección de los alfabetos. También cambiamos el método para que use la propiedad $(A \cap B) = (A^c \cup B^c)^c$.
+
+Por otro lado, cambiamos el método de \emph{equivalencia}. Éste funcionaba mal en la entrega ya que se fijaba la inclusión para un solo lado, cuando deberíamos haber revisado las inclusiones para ambos lados.
